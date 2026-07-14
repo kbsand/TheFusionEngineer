@@ -1,4 +1,5 @@
 using System.Collections;
+using TheFusionEngineer.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,8 @@ namespace TheFusionEngineer.Stage02
         [SerializeField] private Text careerCoreText;
         [SerializeField] private Text centerMessage;
         [SerializeField] private GameObject careerCoreObject;
+        [SerializeField] private StagePortalController stagePortal;
+        [SerializeField] private LadderClimbController ladder;
 
         [Header("Localized Text")]
         [SerializeField] private string missionAText = "MISSION A\nSYNCHRONIZE SSM MONITORING SYSTEM";
@@ -23,6 +26,9 @@ namespace TheFusionEngineer.Stage02
         [SerializeField] private string finalMessageText = "FULL-STACK + BACKEND\nARCHITECTURE COMPLETE";
 
         private Coroutine messageRoutine;
+        private bool isStageComplete;
+
+        public bool IsStageComplete => isStageComplete;
 
         private void Start()
         {
@@ -42,6 +48,18 @@ namespace TheFusionEngineer.Stage02
             }
 
             careerCoreObject?.SetActive(false);
+            isStageComplete = false;
+            ladder?.SetUnlocked(false);
+        }
+
+        public void ConfigurePortal(StagePortalController portal)
+        {
+            stagePortal = portal;
+        }
+
+        public void ConfigureLadder(LadderClimbController climbLadder)
+        {
+            ladder = climbLadder;
         }
 
         public void Configure(
@@ -82,6 +100,9 @@ namespace TheFusionEngineer.Stage02
                 }
 
                 careerCoreObject?.SetActive(true);
+                isStageComplete = true;
+                stagePortal?.UnlockPortal();
+                ladder?.SetUnlocked(true);
                 SetMissionText(finalMessageText);
 
                 if (messageRoutine != null)

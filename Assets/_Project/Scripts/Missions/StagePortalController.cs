@@ -1,4 +1,5 @@
 using System.Collections;
+using TheFusionEngineer.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -16,6 +17,12 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private Text interactionPrompt;
         [SerializeField] private GameObject unlockMessage;
         [SerializeField] private PortalGuidanceController guidance;
+        [SerializeField] private HoldInteractionController holdInteraction;
+        [SerializeField] private SceneTransitionController sceneTransition;
+        [SerializeField] private string targetSceneName = "Stage02_Architect";
+        [SerializeField] private Color unlockedBaseColor = new(0.05f, 0.85f, 1f);
+        [SerializeField] private Color unlockedEmissionColor = new(0.15f, 2.55f, 3f);
+        [SerializeField, Min(0f)] private float unlockMessageDuration = 0.35f;
         [SerializeField, Min(0.1f)] private float interactionDistance = 3f;
 
         private InputAction interactAction;
@@ -31,6 +38,11 @@ namespace TheFusionEngineer.Missions
         {
             interactAction = inputActions?.FindAction("Player/Interact", true);
             visualProperties = new MaterialPropertyBlock();
+            sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
+            if (holdInteraction != null)
+            {
+                holdInteraction.Completed += EnterPortal;
+            }
             ApplyLockedState();
         }
 
@@ -43,6 +55,14 @@ namespace TheFusionEngineer.Missions
         {
             interactAction?.Disable();
             SetPromptVisible(false);
+        }
+
+        private void OnDestroy()
+        {
+            if (holdInteraction != null)
+            {
+                holdInteraction.Completed -= EnterPortal;
+            }
         }
 
         private void Update()
@@ -63,7 +83,10 @@ namespace TheFusionEngineer.Missions
 
             if (isInRange != wasInRange)
             {
-                SetPromptVisible(isInRange);
+                if (holdInteraction == null)
+                {
+                    SetPromptVisible(isInRange);
+                }
                 wasInRange = isInRange;
 
                 if (isInRange)
@@ -72,9 +95,9 @@ namespace TheFusionEngineer.Missions
                 }
             }
 
-            if (isInRange && interactAction != null && interactAction.WasPressedThisFrame())
+            if (holdInteraction == null && isInRange && interactAction != null && interactAction.WasPressedThisFrame())
             {
-                EnterStageTwo();
+                EnterPortal();
             }
         }
 
@@ -86,6 +109,7 @@ namespace TheFusionEngineer.Missions
             }
 
             isUnlocked = true;
+            holdInteraction?.SetAvailable(true);
             if (interactionCollider != null)
             {
                 interactionCollider.enabled = true;
@@ -103,8 +127,8 @@ namespace TheFusionEngineer.Missions
 
             guidance?.ShowGuidance();
 
-            SetPortalColor(new Color(0.05f, 0.85f, 1f), new Color(0.05f, 0.85f, 1f) * 3f);
-            Debug.Log("[Stage 1 Portal] Stage 2 portal unlocked.");
+            SetPortalColor(unlockedBaseColor, unlockedEmissionColor);
+            Debug.Log($"[Stage Portal] Portal unlocked for {targetSceneName}.");
         }
 
         public void Configure(
@@ -134,15 +158,39 @@ namespace TheFusionEngineer.Missions
             guidance = portalGuidance;
         }
 
+        public void ConfigureHoldInteraction(HoldInteractionController interaction)
+        {
+            holdInteraction = interaction;
+            if (interactionPrompt != null)
+            {
+                interactionPrompt.gameObject.SetActive(false);
+            }
+        }
+
+        public void ConfigureTransition(
+            SceneTransitionController transition,
+            string sceneName,
+            Color baseColor,
+            Color emissionColor,
+            float messageDuration = 0.35f)
+        {
+            sceneTransition = transition;
+            targetSceneName = sceneName;
+            unlockedBaseColor = baseColor;
+            unlockedEmissionColor = emissionColor;
+            unlockMessageDuration = Mathf.Max(0f, messageDuration);
+        }
+
         private void ApplyLockedState()
         {
             isUnlocked = false;
             hasEntered = false;
             wasInRange = false;
+            holdInteraction?.SetAvailable(false, "Acquire Career Core First");
 
             if (interactionCollider != null)
             {
-                interactionCollider.enabled = false;
+                interactionCollider.enabled = holdInteraction != null;
             }
 
             if (portalLight != null)
@@ -164,7 +212,7 @@ namespace TheFusionEngineer.Missions
             SetPortalColor(new Color(0.035f, 0.06f, 0.08f), Color.black);
         }
 
-        private void EnterStageTwo()
+        private void EnterPortal()
         {
             if (hasEntered)
             {
@@ -173,24 +221,44 @@ namespace TheFusionEngineer.Missions
 
             hasEntered = true;
             SetPromptVisible(false);
-            StartCoroutine(ShowUnlockMessage());
-            Debug.Log("[Stage 1 Portal] STAGE 2 UNLOCKED. Scene transition is not connected yet.");
+            StartCoroutine(EnterPortalRoutine());
         }
 
-        private IEnumerator ShowUnlockMessage()
+        private IEnumerator EnterPortalRoutine()
         {
-            if (unlockMessage == null)
+            if (unlockMessage != null)
             {
+                unlockMessage.SetActive(true);
+            }
+
+            if (unlockMessageDuration > 0f)
+            {
+                yield return new WaitForSecondsRealtime(unlockMessageDuration);
+            }
+
+            if (unlockMessage != null)
+            {
+                unlockMessage.SetActive(false);
+            }
+
+            sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
+            if (sceneTransition == null)
+            {
+                hasEntered = false;
+                Debug.LogError($"[Stage Portal] SceneTransitionController is missing. Cannot load '{targetSceneName}'.", this);
                 yield break;
             }
 
-            unlockMessage.SetActive(true);
-            yield return new WaitForSeconds(3f);
-            unlockMessage.SetActive(false);
+            sceneTransition.LoadScene(targetSceneName);
         }
 
         private void SetPromptVisible(bool visible)
         {
+            if (holdInteraction != null)
+            {
+                return;
+            }
+
             if (interactionPrompt != null)
             {
                 interactionPrompt.gameObject.SetActive(visible && isUnlocked && !hasEntered);

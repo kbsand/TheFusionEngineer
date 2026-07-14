@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TheFusionEngineer.Missions;
 
 namespace TheFusionEngineer.Stage03
 {
@@ -14,9 +15,10 @@ namespace TheFusionEngineer.Stage03
         [SerializeField] private Renderer[] linkedIndicators = System.Array.Empty<Renderer>();
         [SerializeField] private GameObject[] activateOnComplete = System.Array.Empty<GameObject>();
         [SerializeField] private string promptMessage = "Press E to Execute";
+        [SerializeField] private string lockedPromptMessage = "Complete Mission A First";
+        [SerializeField] private HoldInteractionController holdInteraction;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.7f;
 
-        private InputAction interactAction;
         private MaterialPropertyBlock visualProperties;
         private bool isAvailable;
         private bool isCompleted;
@@ -26,7 +28,6 @@ namespace TheFusionEngineer.Stage03
 
         private void Awake()
         {
-            interactAction = inputActions?.FindAction("Player/Interact", true);
             visualProperties = new MaterialPropertyBlock();
             SetIndicators(new Color(0.9f, 0.03f, 0.04f), new Color(1f, 0.01f, 0.03f) * 2f);
             SetPromptVisible(false);
@@ -35,39 +36,18 @@ namespace TheFusionEngineer.Stage03
             {
                 target?.SetActive(false);
             }
-        }
 
-        private void OnEnable()
-        {
-            interactAction?.Enable();
-        }
-
-        private void OnDisable()
-        {
-            interactAction?.Disable();
-            SetPromptVisible(false);
-        }
-
-        private void Update()
-        {
-            if (!isAvailable || isCompleted || player == null)
+            if (holdInteraction != null)
             {
-                return;
+                holdInteraction.Completed += Complete;
             }
+        }
 
-            Vector3 offset = transform.position - player.position;
-            offset.y = 0f;
-            bool inRange = offset.sqrMagnitude <= interactionDistance * interactionDistance;
-
-            if (inRange != wasInRange)
+        private void OnDestroy()
+        {
+            if (holdInteraction != null)
             {
-                wasInRange = inRange;
-                SetPromptVisible(inRange);
-            }
-
-            if (inRange && interactAction != null && interactAction.WasPressedThisFrame())
-            {
-                Complete();
+                holdInteraction.Completed -= Complete;
             }
         }
 
@@ -98,6 +78,14 @@ namespace TheFusionEngineer.Stage03
             isAvailable = available && !isCompleted;
             wasInRange = false;
             SetPromptVisible(false);
+            holdInteraction?.SetAvailable(isAvailable, lockedPromptMessage);
+        }
+
+        public void ConfigureHoldInteraction(HoldInteractionController interaction, string unavailablePrompt)
+        {
+            holdInteraction = interaction;
+            lockedPromptMessage = unavailablePrompt;
+            SetPromptVisible(false);
         }
 
         private void Complete()
@@ -109,6 +97,7 @@ namespace TheFusionEngineer.Stage03
 
             isCompleted = true;
             isAvailable = false;
+            holdInteraction?.SetAvailable(false, lockedPromptMessage);
             SetPromptVisible(false);
             SetIndicators(new Color(0.03f, 0.9f, 0.3f), new Color(0.02f, 1f, 0.45f) * 2f);
 

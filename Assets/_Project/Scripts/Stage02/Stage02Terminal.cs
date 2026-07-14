@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TheFusionEngineer.Missions;
 
 namespace TheFusionEngineer.Stage02
 {
@@ -15,9 +16,10 @@ namespace TheFusionEngineer.Stage02
         [SerializeField] private Renderer[] linkedStatusIndicators = System.Array.Empty<Renderer>();
         [SerializeField] private GameObject[] activateOnComplete = System.Array.Empty<GameObject>();
         [SerializeField] private string promptMessage = "Press E to Execute";
+        [SerializeField] private string lockedPromptMessage = "Complete Mission A First";
+        [SerializeField] private HoldInteractionController holdInteraction;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.5f;
 
-        private InputAction interactAction;
         private MaterialPropertyBlock statusProperties;
         private bool isAvailable;
         private bool isCompleted;
@@ -27,7 +29,6 @@ namespace TheFusionEngineer.Stage02
 
         private void Awake()
         {
-            interactAction = inputActions?.FindAction("Player/Interact", true);
             statusProperties = new MaterialPropertyBlock();
             SetStatusColor(new Color(0.9f, 0.04f, 0.03f), new Color(1f, 0.02f, 0.01f) * 2f);
             SetLinkedStatusColors(new Color(0.9f, 0.04f, 0.03f), new Color(1f, 0.02f, 0.01f) * 2f);
@@ -37,37 +38,18 @@ namespace TheFusionEngineer.Stage02
             {
                 target?.SetActive(false);
             }
-        }
 
-        private void OnEnable()
-        {
-            interactAction?.Enable();
-        }
-
-        private void OnDisable()
-        {
-            interactAction?.Disable();
-            SetPromptVisible(false);
-        }
-
-        private void Update()
-        {
-            if (!isAvailable || isCompleted || player == null)
+            if (holdInteraction != null)
             {
-                return;
+                holdInteraction.Completed += Complete;
             }
+        }
 
-            bool inRange = IsPlayerInRange();
-
-            if (inRange != wasInRange)
+        private void OnDestroy()
+        {
+            if (holdInteraction != null)
             {
-                wasInRange = inRange;
-                SetPromptVisible(inRange);
-            }
-
-            if (inRange && interactAction != null && interactAction.WasPressedThisFrame())
-            {
-                Complete();
+                holdInteraction.Completed -= Complete;
             }
         }
 
@@ -96,6 +78,14 @@ namespace TheFusionEngineer.Stage02
             isAvailable = available && !isCompleted;
             wasInRange = false;
             SetPromptVisible(false);
+            holdInteraction?.SetAvailable(isAvailable, lockedPromptMessage);
+        }
+
+        public void ConfigureHoldInteraction(HoldInteractionController interaction, string unavailablePrompt)
+        {
+            holdInteraction = interaction;
+            lockedPromptMessage = unavailablePrompt;
+            SetPromptVisible(false);
         }
 
         public void ConfigureInteractionPoints(Transform[] points)
@@ -122,6 +112,7 @@ namespace TheFusionEngineer.Stage02
 
             isCompleted = true;
             isAvailable = false;
+            holdInteraction?.SetAvailable(false, lockedPromptMessage);
             SetPromptVisible(false);
             SetStatusColor(new Color(0.04f, 0.9f, 0.22f), new Color(0.04f, 1f, 0.25f) * 2f);
             SetLinkedStatusColors(new Color(0.04f, 0.9f, 0.22f), new Color(0.04f, 1f, 0.25f) * 2f);

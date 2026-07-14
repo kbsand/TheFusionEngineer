@@ -1,4 +1,5 @@
 using System.Collections;
+using TheFusionEngineer.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ namespace TheFusionEngineer.Stage03
         [SerializeField] private Text careerCoreText;
         [SerializeField] private Text centerMessage;
         [SerializeField] private GameObject careerCoreObject;
+        [SerializeField] private StagePortalController stagePortal;
 
         [Header("Localized Text")]
         [SerializeField] private string missionAText = "MISSION A\nACTIVATE G-BRAIN RAG SYSTEM";
@@ -61,6 +63,11 @@ namespace TheFusionEngineer.Stage03
             careerCoreObject = coreObject;
         }
 
+        public void ConfigurePortal(StagePortalController portal)
+        {
+            stagePortal = portal;
+        }
+
         public void CompleteTerminal(Stage03Terminal terminal)
         {
             if (terminal == missionA && missionA.IsCompleted)
@@ -79,6 +86,7 @@ namespace TheFusionEngineer.Stage03
 
             solarLogistics?.StartLogistics();
             isStageComplete = true;
+            stagePortal?.UnlockPortal();
             SetText(missionText, finalMessageText);
             SetText(careerCoreText, acquiredText);
             if (careerCoreText != null)

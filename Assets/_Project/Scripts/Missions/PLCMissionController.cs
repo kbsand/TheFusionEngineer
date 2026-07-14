@@ -13,6 +13,7 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private GameObject completionMessage;
         [SerializeField] private StagePortalController stagePortal;
         [SerializeField] private Light plcFaultLight;
+        [SerializeField] private HoldInteractionController holdInteraction;
 
         private bool isCompleted;
         private MaterialPropertyBlock warningProperties;
@@ -29,6 +30,19 @@ namespace TheFusionEngineer.Missions
             if (completionMessage != null)
             {
                 completionMessage.SetActive(false);
+            }
+
+            if (holdInteraction != null)
+            {
+                holdInteraction.Completed += TryCompleteMission;
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (holdInteraction != null)
+            {
+                holdInteraction.Completed -= TryCompleteMission;
             }
         }
 
@@ -48,6 +62,7 @@ namespace TheFusionEngineer.Missions
             }
 
             isCompleted = true;
+            holdInteraction?.SetAvailable(false);
             SetPlayerInRange(false);
             SetWarningColor(new Color(0.05f, 0.9f, 0.2f));
             SetFaultLightColor(new Color(0.05f, 0.9f, 0.2f));
@@ -86,6 +101,15 @@ namespace TheFusionEngineer.Missions
         {
             stagePortal = portal;
             plcFaultLight = faultLight;
+        }
+
+        public void ConfigureHoldInteraction(HoldInteractionController interaction)
+        {
+            holdInteraction = interaction;
+            if (interactionPrompt != null)
+            {
+                interactionPrompt.gameObject.SetActive(false);
+            }
         }
 
         private IEnumerator ShowCompletionMessage()
