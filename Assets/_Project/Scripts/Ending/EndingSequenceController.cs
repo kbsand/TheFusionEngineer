@@ -37,6 +37,7 @@ namespace TheFusionEngineer.Ending
         private Vector3 rightDoorClosedPosition;
         private Material[] silhouetteMaterials;
         private Color[] silhouetteColors;
+        private Animator silhouetteAnimator;
         private Coroutine sequenceRoutine;
         private bool isMerging;
         private bool sequenceFinished;
@@ -54,6 +55,9 @@ namespace TheFusionEngineer.Ending
 
             leftDoorClosedPosition = leftDoor != null ? leftDoor.localPosition : Vector3.zero;
             rightDoorClosedPosition = rightDoor != null ? rightDoor.localPosition : Vector3.zero;
+            silhouetteAnimator = playerSilhouette != null
+                ? playerSilhouette.GetComponentInChildren<Animator>(true)
+                : null;
             PrepareSilhouetteMaterials();
             ApplyInitialState();
         }
@@ -261,6 +265,11 @@ namespace TheFusionEngineer.Ending
 
         private IEnumerator WalkToGate(float duration)
         {
+            if (silhouetteAnimator != null)
+            {
+                silhouetteAnimator.SetFloat("Speed", 1f);
+            }
+
             Vector3 start = silhouetteStart;
             Vector3 leftOpen = leftDoorClosedPosition + Vector3.left * 2.2f;
             Vector3 rightOpen = rightDoorClosedPosition + Vector3.right * 2.2f;
@@ -296,6 +305,11 @@ namespace TheFusionEngineer.Ending
 
                 yield return null;
             }
+
+            if (silhouetteAnimator != null)
+            {
+                silhouetteAnimator.SetFloat("Speed", 0f);
+            }
         }
 
         private IEnumerator FadeSilhouette(float duration)
@@ -324,6 +338,11 @@ namespace TheFusionEngineer.Ending
             {
                 StopCoroutine(sequenceRoutine);
                 sequenceRoutine = null;
+            }
+
+            if (silhouetteAnimator != null)
+            {
+                silhouetteAnimator.SetFloat("Speed", 0f);
             }
 
             ApplyFinalState();
