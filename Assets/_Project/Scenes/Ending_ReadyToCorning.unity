@@ -2566,8 +2566,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Ending.PortfolioButtonController
   resumeUrl: 
-  githubUrl: 
-  emailAddress: 
+  githubUrl: https://github.com/kbsand
+  emailAddress: kbsand6@gmail.com
   sceneTransition: {fileID: 1970003887}
 --- !u!114 &366498347
 MonoBehaviour:
@@ -3413,12 +3413,18 @@ MonoBehaviour:
   - {fileID: 1907696036}
   silhouetteGlow: {fileID: 1540567810}
   silhouetteStart: {x: 0, y: 0, z: 0}
-  gateInsidePosition: {x: 0, y: 0, z: 4.2}
+  gateInsidePosition: {x: 0, y: 0, z: 6.2}
   fusionText: {fileID: 937822250}
   leftDoor: {fileID: 351992750}
   rightDoor: {fileID: 598513662}
   gateLightPanel: {fileID: 504684200}
   gateLight: {fileID: 1393357872}
+  doorOpenDistance: 3.1
+  gateOpenDuration: 0.9
+  walkDuration: 3.2
+  gateLightMaxIntensity: 1.25
+  revealGlowIntensity: 1.4
+  rimGlowIntensity: 0.45
   flashOverlay: {fileID: 239977307}
   finalUI: {fileID: 836796501}
   skipHint: {fileID: 1498644899}
@@ -3527,6 +3533,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 277644059}
     m_Modifications:
+    - target: {fileID: -9208723614577387111, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 42f1b2b54b9aa944fa833c3a98d4c825, type: 2}
     - target: {fileID: -8679921383154817045, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -3567,10 +3577,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -2037884248300995540, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2112ebdd59a0ce84698a357cabdc872b, type: 2}
     - target: {fileID: 919132149155446097, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
       propertyPath: m_Name
       value: EndingEngineerVisual
       objectReference: {fileID: 0}
+    - target: {fileID: 2342956203822869081, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 053cdd6a6525d1e43a5ca660ea658eda, type: 2}
+    - target: {fileID: 3964350945898810324, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 22b6f62743a6f214f868d5f4baf42404, type: 2}
+    - target: {fileID: 4998044866364479450, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d9dd57d31722db34d8652615cb5fc2ac, type: 2}
     - target: {fileID: 5866666021909216657, guid: ded7cdd0b6759d54fa7d266318353712, type: 3}
       propertyPath: m_Controller
       value: 
@@ -7791,6 +7817,7 @@ GameObject:
   - component: {fileID: 878759062}
   - component: {fileID: 878759061}
   - component: {fileID: 878759060}
+  - component: {fileID: 878759063}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -7872,6 +7899,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &878759063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878759059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &888349054
 GameObject:
   m_ObjectHideFlags: 0
@@ -12520,7 +12591,7 @@ Transform:
   m_GameObject: {fileID: 1393357870}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 3, z: 0.4}
+  m_LocalPosition: {x: 0, y: 3, z: 3.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12538,7 +12609,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.2, g: 0.95, b: 1, a: 1}
   m_Intensity: 5
-  m_Range: 10
+  m_Range: 5
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -13554,7 +13625,7 @@ Light:
   m_Type: 2
   m_Color: {r: 0.05, g: 1, b: 0.88, a: 1}
   m_Intensity: 0
-  m_Range: 4.5
+  m_Range: 3.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize2D: {x: 0.5, y: 0.5}
@@ -13616,7 +13687,7 @@ Transform:
   m_GameObject: {fileID: 1540567809}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.4, z: -0.6}
+  m_LocalPosition: {x: 0, y: 1.4, z: 0.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

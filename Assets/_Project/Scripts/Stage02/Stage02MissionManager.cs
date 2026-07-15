@@ -2,6 +2,7 @@ using System.Collections;
 using TheFusionEngineer.Missions;
 using UnityEngine;
 using UnityEngine.UI;
+using TheFusionEngineer.Core;
 
 namespace TheFusionEngineer.Stage02
 {
@@ -16,6 +17,9 @@ namespace TheFusionEngineer.Stage02
         [SerializeField] private GameObject careerCoreObject;
         [SerializeField] private StagePortalController stagePortal;
         [SerializeField] private LadderClimbController ladder;
+        [SerializeField] private AudioClip firstMissionCompleteClip;
+        [SerializeField] private AudioClip stageCompleteClip;
+        [SerializeField, Range(0f, 1f)] private float completionVolume = 0.85f;
 
         [Header("Localized Text")]
         [SerializeField] private string missionAText = "MISSION A\nSYNCHRONIZE SSM MONITORING SYSTEM";
@@ -32,6 +36,15 @@ namespace TheFusionEngineer.Stage02
 
         private void Start()
         {
+            if (firstMissionCompleteClip == null)
+            {
+                firstMissionCompleteClip = GameSfxLibrary.LoadFirstMissionComplete();
+            }
+
+            if (stageCompleteClip == null)
+            {
+                stageCompleteClip = GameSfxLibrary.LoadStageComplete();
+            }
             missionA?.SetAvailable(true);
             missionB?.SetAvailable(false);
             roleBadge?.ShowMissionARole();
@@ -85,6 +98,7 @@ namespace TheFusionEngineer.Stage02
             if (terminal == missionA && missionA.IsCompleted)
             {
                 ShowMessage(missionACompleteText, 3f);
+                PersistentSfxPlayer.Play(firstMissionCompleteClip, completionVolume);
                 missionB?.SetAvailable(true);
                 roleBadge?.ShowMissionBRole();
                 SetMissionText(missionBText);
@@ -101,6 +115,7 @@ namespace TheFusionEngineer.Stage02
 
                 careerCoreObject?.SetActive(true);
                 isStageComplete = true;
+                PersistentSfxPlayer.Play(stageCompleteClip, completionVolume);
                 stagePortal?.UnlockPortal();
                 ladder?.SetUnlocked(true);
                 SetMissionText(finalMessageText);

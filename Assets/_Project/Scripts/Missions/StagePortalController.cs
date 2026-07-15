@@ -24,6 +24,8 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private Color unlockedEmissionColor = new(0.15f, 2.55f, 3f);
         [SerializeField, Min(0f)] private float unlockMessageDuration = 0.35f;
         [SerializeField, Min(0.1f)] private float interactionDistance = 3f;
+        [SerializeField] private AudioClip enterPortalClip;
+        [SerializeField, Range(0f, 1f)] private float enterPortalVolume = 0.85f;
 
         private InputAction interactAction;
         private MaterialPropertyBlock visualProperties;
@@ -36,6 +38,10 @@ namespace TheFusionEngineer.Missions
 
         private void Awake()
         {
+            if (enterPortalClip == null)
+            {
+                enterPortalClip = GameSfxLibrary.LoadPortalEnter();
+            }
             interactAction = inputActions?.FindAction("Player/Interact", true);
             visualProperties = new MaterialPropertyBlock();
             sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
@@ -220,6 +226,7 @@ namespace TheFusionEngineer.Missions
             }
 
             hasEntered = true;
+            PersistentSfxPlayer.Play(enterPortalClip, enterPortalVolume);
             SetPromptVisible(false);
             StartCoroutine(EnterPortalRoutine());
         }

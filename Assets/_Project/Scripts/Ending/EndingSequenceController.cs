@@ -26,6 +26,14 @@ namespace TheFusionEngineer.Ending
         [SerializeField] private Transform rightDoor;
         [SerializeField] private GameObject gateLightPanel;
         [SerializeField] private Light gateLight;
+        [SerializeField, Min(0f)] private float doorOpenDistance = 3.1f;
+        [SerializeField, Min(0.1f)] private float gateOpenDuration = 0.9f;
+        [SerializeField, Min(0.1f)] private float walkDuration = 3.2f;
+        [SerializeField, Min(0f)] private float gateLightMaxIntensity = 1.25f;
+
+        [Header("Character Glow")]
+        [SerializeField, Min(0f)] private float revealGlowIntensity = 1.4f;
+        [SerializeField, Min(0f)] private float rimGlowIntensity = 0.45f;
 
         [Header("UI")]
         [SerializeField] private CanvasGroup flashOverlay;
@@ -180,7 +188,7 @@ namespace TheFusionEngineer.Ending
                 if (silhouetteGlow != null)
                 {
                     silhouetteGlow.enabled = true;
-                    silhouetteGlow.intensity = 4.5f;
+                    silhouetteGlow.intensity = revealGlowIntensity;
                 }
 
                 yield return RevealSilhouette(0.48f);
@@ -198,7 +206,8 @@ namespace TheFusionEngineer.Ending
                 gateLight.intensity = 0.5f;
             }
 
-            yield return WalkToGate(3f);
+            yield return OpenGate(gateOpenDuration);
+            yield return WalkToGate(walkDuration);
             yield return FadeSilhouette(0.75f);
             yield return Fade(finalUI, 0f, 1f, 0.6f);
 
@@ -253,7 +262,10 @@ namespace TheFusionEngineer.Ending
                 SetSilhouetteAlpha(progress);
                 if (silhouetteGlow != null)
                 {
-                    silhouetteGlow.intensity = Mathf.Lerp(4.5f, 1.8f, progress);
+                    silhouetteGlow.intensity = Mathf.Lerp(
+                        revealGlowIntensity,
+                        rimGlowIntensity,
+                        progress);
                 }
 
                 yield return null;
@@ -261,6 +273,50 @@ namespace TheFusionEngineer.Ending
 
             playerSilhouette.localScale = Vector3.one;
             SetSilhouetteAlpha(1f);
+        }
+
+        private IEnumerator OpenGate(float duration)
+        {
+            Vector3 leftOpen = leftDoorClosedPosition + Vector3.left * doorOpenDistance;
+            Vector3 rightOpen = rightDoorClosedPosition + Vector3.right * doorOpenDistance;
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float progress = Smooth(elapsed / duration);
+                if (leftDoor != null)
+                {
+                    leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftOpen, progress);
+                }
+
+                if (rightDoor != null)
+                {
+                    rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightOpen, progress);
+                }
+
+                if (gateLight != null)
+                {
+                    gateLight.intensity = Mathf.Lerp(0.25f, gateLightMaxIntensity, progress);
+                }
+
+                yield return null;
+            }
+
+            if (leftDoor != null)
+            {
+                leftDoor.localPosition = leftOpen;
+            }
+
+            if (rightDoor != null)
+            {
+                rightDoor.localPosition = rightOpen;
+            }
+
+            if (gateLight != null)
+            {
+                gateLight.intensity = gateLightMaxIntensity;
+            }
         }
 
         private IEnumerator WalkToGate(float duration)
@@ -271,39 +327,25 @@ namespace TheFusionEngineer.Ending
             }
 
             Vector3 start = silhouetteStart;
-            Vector3 leftOpen = leftDoorClosedPosition + Vector3.left * 2.2f;
-            Vector3 rightOpen = rightDoorClosedPosition + Vector3.right * 2.2f;
             float elapsed = 0f;
 
             while (elapsed < duration)
             {
                 elapsed += Time.unscaledDeltaTime;
                 float linear = Mathf.Clamp01(elapsed / duration);
-                float movement = Smooth(linear);
-                Vector3 position = Vector3.Lerp(start, gateInsidePosition, movement);
+                Vector3 position = Vector3.Lerp(start, gateInsidePosition, linear);
                 position.y += Mathf.Sin(linear * Mathf.PI * 10f) * 0.045f;
                 if (playerSilhouette != null)
                 {
                     playerSilhouette.localPosition = position;
                 }
 
-                float gateProgress = Smooth(Mathf.InverseLerp(0.22f, 0.72f, linear));
-                if (leftDoor != null)
-                {
-                    leftDoor.localPosition = Vector3.Lerp(leftDoorClosedPosition, leftOpen, gateProgress);
-                }
-
-                if (rightDoor != null)
-                {
-                    rightDoor.localPosition = Vector3.Lerp(rightDoorClosedPosition, rightOpen, gateProgress);
-                }
-
-                if (gateLight != null)
-                {
-                    gateLight.intensity = Mathf.Lerp(0.5f, 5f, gateProgress);
-                }
-
                 yield return null;
+            }
+
+            if (playerSilhouette != null)
+            {
+                playerSilhouette.localPosition = gateInsidePosition;
             }
 
             if (silhouetteAnimator != null)
@@ -322,7 +364,7 @@ namespace TheFusionEngineer.Ending
                 SetSilhouetteAlpha(alpha);
                 if (silhouetteGlow != null)
                 {
-                    silhouetteGlow.intensity = Mathf.Lerp(0f, 1.8f, alpha);
+                    silhouetteGlow.intensity = Mathf.Lerp(0f, rimGlowIntensity, alpha);
                 }
 
                 yield return null;
@@ -421,19 +463,19 @@ namespace TheFusionEngineer.Ending
             SetSilhouetteAlpha(0f);
             if (leftDoor != null)
             {
-                leftDoor.localPosition = leftDoorClosedPosition + Vector3.left * 2.2f;
+                leftDoor.localPosition = leftDoorClosedPosition + Vector3.left * doorOpenDistance;
             }
 
             if (rightDoor != null)
             {
-                rightDoor.localPosition = rightDoorClosedPosition + Vector3.right * 2.2f;
+                rightDoor.localPosition = rightDoorClosedPosition + Vector3.right * doorOpenDistance;
             }
 
             gateLightPanel?.SetActive(true);
             if (gateLight != null)
             {
                 gateLight.enabled = true;
-                gateLight.intensity = 5f;
+                gateLight.intensity = gateLightMaxIntensity;
             }
 
             SetGroup(flashOverlay, 0f, false);

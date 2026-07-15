@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TheFusionEngineer.Core;
 
 namespace TheFusionEngineer.Missions
 {
@@ -27,6 +28,10 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private bool repeatable;
         [SerializeField] private bool useTriggerRange = true;
 
+        [Header("Audio")]
+        [SerializeField] private AudioClip holdClip;
+        [SerializeField, Range(0f, 1f)] private float holdVolume = 0.85f;
+
         private InputAction interactAction;
         private float heldTime;
         private float currentSqrDistance = float.PositiveInfinity;
@@ -36,6 +41,9 @@ namespace TheFusionEngineer.Missions
         private bool isCompleted;
         private bool requiresRelease;
         private bool isHolding;
+        private AudioSource holdSource;
+        private AudioClip reversedHoldClip;
+        private bool hasLoggedHoldPlayback;
 
         public event Action Completed;
 
@@ -46,8 +54,24 @@ namespace TheFusionEngineer.Missions
         {
             interactAction = inputActions?.FindAction("Player/Interact", true);
             isAvailable = startsAvailable;
+            if (holdClip == null)
+            {
+                holdClip = GameSfxLibrary.LoadHoldReverse();
+            }
             ResetProgress();
             HideAllUI();
+            holdSource = gameObject.AddComponent<AudioSource>();
+            holdSource.playOnAwake = false;
+            holdSource.loop = true;
+            holdSource.spatialBlend = 0f;
+            holdSource.priority = 0;
+            holdSource.ignoreListenerPause = true;
+            reversedHoldClip = CreateReversedClip(holdClip);
+
+            if (holdClip == null)
+            {
+                Debug.LogError("[Hold Interaction] Hold clip could not be loaded.", this);
+            }
         }
 
         private void OnEnable()
@@ -73,6 +97,15 @@ namespace TheFusionEngineer.Missions
             isInRange = false;
             ResetProgress();
             HideAllUI();
+            StopHoldSound();
+        }
+
+        private void OnDestroy()
+        {
+            if (reversedHoldClip != null)
+            {
+                Destroy(reversedHoldClip);
+            }
         }
 
         private void Update()
@@ -239,6 +272,7 @@ namespace TheFusionEngineer.Missions
             {
                 isHolding = true;
                 heldTime = 0f;
+                StartHoldSound();
                 SetProgress(0f);
                 ShowProgress();
                 return;
@@ -326,7 +360,74 @@ namespace TheFusionEngineer.Missions
         {
             heldTime = 0f;
             isHolding = false;
+            StopHoldSound();
             SetProgress(0f);
+        }
+
+        private void StartHoldSound()
+        {
+            if (holdSource == null || reversedHoldClip == null)
+            {
+                return;
+            }
+
+            holdSource.Stop();
+            holdSource.clip = reversedHoldClip;
+            holdSource.volume = holdVolume;
+            holdSource.pitch = 1f;
+            holdSource.time = 0f;
+            holdSource.Play();
+            if (!hasLoggedHoldPlayback)
+            {
+                hasLoggedHoldPlayback = true;
+                Debug.Log($"[Hold Interaction] Playing reversed hold sound '{holdClip.name}' at volume {holdVolume:0.00}.", this);
+            }
+        }
+
+        private static AudioClip CreateReversedClip(AudioClip source)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            int sampleCount = source.samples * source.channels;
+            float[] samples = new float[sampleCount];
+            if (!source.GetData(samples, 0))
+            {
+                Debug.LogWarning($"[Hold Interaction] Could not read '{source.name}' for reverse playback.");
+                return null;
+            }
+
+            int channels = source.channels;
+            int frameCount = source.samples;
+            for (int leftFrame = 0, rightFrame = frameCount - 1; leftFrame < rightFrame; leftFrame++, rightFrame--)
+            {
+                int leftOffset = leftFrame * channels;
+                int rightOffset = rightFrame * channels;
+                for (int channel = 0; channel < channels; channel++)
+                {
+                    (samples[leftOffset + channel], samples[rightOffset + channel]) =
+                        (samples[rightOffset + channel], samples[leftOffset + channel]);
+                }
+            }
+
+            AudioClip reversed = AudioClip.Create(
+                $"{source.name} (Reversed)",
+                frameCount,
+                channels,
+                source.frequency,
+                false);
+            reversed.SetData(samples, 0);
+            return reversed;
+        }
+
+        private void StopHoldSound()
+        {
+            if (holdSource != null && holdSource.isPlaying)
+            {
+                holdSource.Stop();
+            }
         }
 
         private void SetProgress(float normalized)
