@@ -355,7 +355,10 @@ namespace TheFusionEngineer.Missions
 
         private void HidePrompt()
         {
-            promptLabel?.gameObject.SetActive(false);
+            if (promptLabel != null)
+            {
+                promptLabel.gameObject.SetActive(false);
+            }
         }
 
         private void ShowProgress()
@@ -383,7 +386,10 @@ namespace TheFusionEngineer.Missions
                 progressRoot.interactable = false;
             }
 
-            percentLabel?.gameObject.SetActive(false);
+            if (percentLabel != null)
+            {
+                percentLabel.gameObject.SetActive(false);
+            }
         }
 
         private void HideAllUI()

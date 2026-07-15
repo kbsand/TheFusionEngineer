@@ -15,14 +15,19 @@ namespace TheFusionEngineer.Player
         [SerializeField, Min(0f)] private float rotationSpeed = 720f;
         [SerializeField] private float gravity = -20f;
 
+        [Header("Animation")]
+        [SerializeField] private Animator animator;
+
         private CharacterController characterController;
         private InputAction moveAction;
         private float verticalVelocity;
+        private static readonly int SpeedParameter = Animator.StringToHash("Speed");
 
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
             moveAction = inputActions?.FindAction("Player/Move", true);
+            animator ??= GetComponentInChildren<Animator>(true);
         }
 
         private void OnEnable()
@@ -57,6 +62,13 @@ namespace TheFusionEngineer.Player
             verticalVelocity += gravity * Time.deltaTime;
             Vector3 velocity = moveDirection * moveSpeed + Vector3.up * verticalVelocity;
             characterController.Move(velocity * Time.deltaTime);
+
+            if (animator != null)
+            {
+                Vector3 horizontalVelocity = characterController.velocity;
+                horizontalVelocity.y = 0f;
+                animator.SetFloat(SpeedParameter, horizontalVelocity.magnitude);
+            }
         }
 
         public void Configure(InputActionAsset actions, Transform cameraTransform)
