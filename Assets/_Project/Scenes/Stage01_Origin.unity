@@ -21085,6 +21085,8 @@ MonoBehaviour:
   stageCompleteClip: {fileID: 0}
   completionVolume: 0.915
   playerMovement: {fileID: 0}
+  guidanceFont: {fileID: 11400000, guid: cd2fac18fcb492e43833b713fa0ef35f, type: 2}
+  guidanceFontMaterial: {fileID: 2100000, guid: dd6d8d8c341d58a47927f3702c957ca2, type: 2}
   movementGuidanceMessage: "\uBC29\uD5A5\uD0A4\uB97C \uC870\uC791\uD558\uC5EC \uC6C0\uC9C1\uC5EC
     \uBCF4\uC138\uC694."
   guidanceMessage: "PLC\uB97C \uB514\uBC84\uAE45\uD558\uC5EC  \uBB3C\uB958\uB97C

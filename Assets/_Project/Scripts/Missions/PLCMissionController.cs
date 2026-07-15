@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Serialization;
@@ -22,6 +23,8 @@ namespace TheFusionEngineer.Missions
 
         [Header("Mission Guidance")]
         [SerializeField] private PlayerMovement playerMovement;
+        [SerializeField] private TMP_FontAsset guidanceFont;
+        [SerializeField] private Material guidanceFontMaterial;
         [SerializeField] private string movementGuidanceMessage = "방향키를 조작하여 움직여 보세요.";
         [SerializeField] private string guidanceMessage = "PLC를 조작하세요.";
         [FormerlySerializedAs("guidanceDelay")]
@@ -30,7 +33,7 @@ namespace TheFusionEngineer.Missions
         private bool isCompleted;
         private MaterialPropertyBlock warningProperties;
         private GameObject guidanceRoot;
-        private Text guidanceLabel;
+        private TMP_Text guidanceLabel;
         private Coroutine guidanceRoutine;
         private bool movementInputConfirmed;
 
@@ -233,7 +236,7 @@ namespace TheFusionEngineer.Missions
             Image panel = panelObject.GetComponent<Image>();
             panel.color = new Color(0.015f, 0.025f, 0.035f, 0.92f);
 
-            GameObject textObject = new("GuidanceText", typeof(RectTransform), typeof(Text));
+            GameObject textObject = new("GuidanceText", typeof(RectTransform), typeof(TextMeshProUGUI));
             textObject.transform.SetParent(panelObject.transform, false);
             RectTransform textRect = textObject.GetComponent<RectTransform>();
             textRect.anchorMin = Vector2.zero;
@@ -241,26 +244,24 @@ namespace TheFusionEngineer.Missions
             textRect.offsetMin = new Vector2(24f, 10f);
             textRect.offsetMax = new Vector2(-24f, -10f);
 
-            guidanceLabel = textObject.GetComponent<Text>();
+            guidanceLabel = textObject.GetComponent<TextMeshProUGUI>();
             guidanceLabel.text = message;
-            guidanceLabel.font = CreateGuidanceFont();
-            guidanceLabel.fontSize = 34;
-            guidanceLabel.fontStyle = FontStyle.Bold;
-            guidanceLabel.alignment = TextAnchor.MiddleCenter;
-            guidanceLabel.color = new Color(1f, 0.84f, 0.18f);
-            guidanceLabel.horizontalOverflow = HorizontalWrapMode.Overflow;
-            guidanceLabel.verticalOverflow = VerticalWrapMode.Overflow;
-            guidanceLabel.raycastTarget = false;
-        }
+            if (guidanceFont != null)
+            {
+                guidanceLabel.font = guidanceFont;
+            }
 
-        private static Font CreateGuidanceFont()
-        {
-            Font systemFont = Font.CreateDynamicFontFromOSFont(
-                new[] { "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans CJK KR", "Arial" },
-                34);
-            return systemFont != null
-                ? systemFont
-                : Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            if (guidanceFontMaterial != null)
+            {
+                guidanceLabel.fontSharedMaterial = guidanceFontMaterial;
+            }
+
+            guidanceLabel.fontSize = 34;
+            guidanceLabel.fontStyle = FontStyles.Bold;
+            guidanceLabel.alignment = TextAlignmentOptions.Center;
+            guidanceLabel.color = new Color(1f, 0.84f, 0.18f);
+            guidanceLabel.overflowMode = TextOverflowModes.Overflow;
+            guidanceLabel.raycastTarget = false;
         }
 
         private void HideGuidance()
