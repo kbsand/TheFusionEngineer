@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.Serialization;
 using TheFusionEngineer.Core;
 using TheFusionEngineer.Player;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Missions
 {
@@ -18,6 +19,7 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private StagePortalController stagePortal;
         [SerializeField] private Light plcFaultLight;
         [SerializeField] private HoldInteractionController holdInteraction;
+        [SerializeField] private HoldInteractionController portalHoldInteraction;
         [SerializeField] private AudioClip stageCompleteClip;
         [SerializeField, Range(0f, 1f)] private float completionVolume = 0.85f;
 
@@ -36,6 +38,7 @@ namespace TheFusionEngineer.Missions
         private TMP_Text guidanceLabel;
         private Coroutine guidanceRoutine;
         private bool movementInputConfirmed;
+        private MissionObjectiveBanner objectiveBanner;
 
         public bool IsCompleted => isCompleted;
 
@@ -63,16 +66,14 @@ namespace TheFusionEngineer.Missions
 
         private void Start()
         {
-            if (playerMovement == null)
-            {
-                playerMovement = FindAnyObjectByType<PlayerMovement>();
-            }
-            if (playerMovement != null)
-            {
-                playerMovement.MovementInputDetected += HandleMovementInputDetected;
-            }
+            // StagePortalController의 공통 기본 문구가 설정된 뒤 Stage 1용 한글 문구로 덮어씁니다.
+            portalHoldInteraction?.SetAvailable(false, "먼저 CAREER CORE를 획득하세요");
 
-            guidanceRoutine = StartCoroutine(ShowMovementGuidanceAfterInactivity());
+            objectiveBanner = MissionObjectiveBanner.AttachTo(this);
+            objectiveBanner.Show(
+                "현재 미션  ·  1 / 1",
+                "CL17 Dense Packing 라인 복구",
+                "PLC 제어 패널을 찾아 E 키를 길게 눌러 라인을 복구하세요.");
         }
 
         private void OnDestroy()
@@ -117,7 +118,7 @@ namespace TheFusionEngineer.Missions
 
             if (careerCoreText != null)
             {
-                careerCoreText.text = "CAREER CORE 01: ACQUIRED";
+                careerCoreText.text = "CAREER CORE 01: 획득";
                 careerCoreText.color = new Color(0.35f, 1f, 0.45f);
             }
 
@@ -278,6 +279,8 @@ namespace TheFusionEngineer.Missions
                 guidanceRoot = null;
                 guidanceLabel = null;
             }
+
+            objectiveBanner?.Hide();
         }
 
         private void SetWarningColor(Color color)

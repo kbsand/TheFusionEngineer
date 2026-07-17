@@ -3,6 +3,7 @@ using TheFusionEngineer.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 using TheFusionEngineer.Core;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Stage03
 {
@@ -22,17 +23,26 @@ namespace TheFusionEngineer.Stage03
         [SerializeField, Range(0f, 1f)] private float completionVolume = 0.85f;
 
         [Header("Localized Text")]
-        [SerializeField] private string missionAText = "MISSION A\nACTIVATE G-BRAIN RAG SYSTEM";
-        [SerializeField] private string missionBText = "MISSION B\nSYNCHRONIZE SOLAR LOGISTICS AND SCS";
-        [SerializeField] private string missionARole = "ROLE: AI SYSTEM ARCHITECT";
-        [SerializeField] private string missionBRole = "ROLE: SMART FACTORY CONTROL LEAD";
-        [SerializeField] private string missionACompleteText = "G-BRAIN RAG SYSTEM ONLINE\nHALLUCINATION-SAFE SEARCH ACTIVATED";
-        [SerializeField] private string missionBCompleteText = "SOLAR LOGISTICS SYNCHRONIZED\nSCS FAILOVER ENABLED";
-        [SerializeField] private string acquiredText = "CAREER CORE 03: ACQUIRED";
-        [SerializeField] private string finalMessageText = "OT + IT + AI\nFUSION ENGINEER COMPLETE";
+        [SerializeField] private string missionAText = "미션 A\nG-BRAIN RAG SYSTEM 활성화";
+        [SerializeField] private string missionBText = "미션 B\nSOLAR LOGISTICS + SCS 동기화";
+        [SerializeField] private string missionARole = "직무: AI SYSTEM ARCHITECT";
+        [SerializeField] private string missionBRole = "직무: SMART FACTORY CONTROL LEAD";
+        [SerializeField] private string missionACompleteText =
+            "G-BRAIN RAG SYSTEM 활성화 완료\n환각 방지 검색 기능이 활성화되었습니다";
+        [SerializeField] private string missionBCompleteText =
+            "SOLAR LOGISTICS 동기화 완료\nSCS 장애 전환 기능이 활성화되었습니다";
+        [SerializeField] private string acquiredText = "CAREER CORE 03: 획득";
+        [SerializeField] private string finalMessageText = "OT + IT + AI\nFUSION ENGINEER 역량 완성";
+
+        [Header("Objective Banner")]
+        [SerializeField] private string missionAObjectiveHint =
+            "G-BRAIN RAG 터미널로 이동해 E 키를 길게 눌러 시스템을 활성화하세요.";
+        [SerializeField] private string missionBObjectiveHint =
+            "SOLAR LOGISTICS + SCS로 이동해 E 키를 길게 눌러 시스템을 동기화하세요.";
 
         private Coroutine messageRoutine;
         private bool isStageComplete;
+        private MissionObjectiveBanner objectiveBanner;
 
         public bool IsStageComplete => isStageComplete;
 
@@ -51,7 +61,12 @@ namespace TheFusionEngineer.Stage03
             missionB?.SetAvailable(false);
             SetText(missionText, missionAText);
             SetText(roleBadgeText, missionARole);
-            SetText(careerCoreText, "CAREER CORE 03: LOCKED");
+            SetText(careerCoreText, "CAREER CORE 03: 잠김");
+            objectiveBanner = MissionObjectiveBanner.AttachTo(this);
+            objectiveBanner.Show(
+                "현재 미션  ·  1 / 2",
+                ExtractMissionTitle(missionAText),
+                missionAObjectiveHint);
             centerMessage?.gameObject.SetActive(false);
             careerCoreObject?.SetActive(false);
         }
@@ -90,6 +105,10 @@ namespace TheFusionEngineer.Stage03
                 missionB?.SetAvailable(true);
                 SetText(missionText, missionBText);
                 SetText(roleBadgeText, missionBRole);
+                objectiveBanner?.Show(
+                    "현재 미션  ·  2 / 2",
+                    ExtractMissionTitle(missionBText),
+                    missionBObjectiveHint);
                 return;
             }
 
@@ -104,6 +123,7 @@ namespace TheFusionEngineer.Stage03
             stagePortal?.UnlockPortal();
             SetText(missionText, finalMessageText);
             SetText(careerCoreText, acquiredText);
+            objectiveBanner?.Hide();
             if (careerCoreText != null)
             {
                 careerCoreText.color = new Color(0.35f, 1f, 0.9f);
@@ -155,6 +175,18 @@ namespace TheFusionEngineer.Stage03
             {
                 target.text = value;
             }
+        }
+
+        private static string ExtractMissionTitle(string mission)
+        {
+            if (string.IsNullOrWhiteSpace(mission))
+            {
+                return "현재 미션을 완료하세요";
+            }
+
+            int firstLineEnd = mission.IndexOf('\n');
+            string title = firstLineEnd >= 0 ? mission[(firstLineEnd + 1)..] : mission;
+            return title.Replace("\r", string.Empty).Replace("\n", " ").Trim();
         }
     }
 }

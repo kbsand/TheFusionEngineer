@@ -51,7 +51,7 @@ namespace TheFusionEngineer.Stage02
         public void SetUnlocked(bool unlocked)
         {
             isUnlocked = unlocked;
-            holdInteraction?.SetAvailable(unlocked, "Complete Mission A and B First");
+            holdInteraction?.SetAvailable(unlocked, "먼저 미션 A와 B를 완료하세요");
         }
 
         private void BeginClimb()

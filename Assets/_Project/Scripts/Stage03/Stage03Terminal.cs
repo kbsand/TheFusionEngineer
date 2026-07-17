@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TheFusionEngineer.Missions;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Stage03
 {
@@ -14,8 +15,8 @@ namespace TheFusionEngineer.Stage03
         [SerializeField] private Renderer statusIndicator;
         [SerializeField] private Renderer[] linkedIndicators = System.Array.Empty<Renderer>();
         [SerializeField] private GameObject[] activateOnComplete = System.Array.Empty<GameObject>();
-        [SerializeField] private string promptMessage = "Press E to Execute";
-        [SerializeField] private string lockedPromptMessage = "Complete Mission A First";
+        [SerializeField] private string promptMessage = "E 키를 길게 눌러 실행하세요";
+        [SerializeField] private string lockedPromptMessage = "먼저 미션 A를 완료하세요";
         [SerializeField] private HoldInteractionController holdInteraction;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.7f;
 
@@ -113,7 +114,7 @@ namespace TheFusionEngineer.Stage03
         {
             if (interactionPrompt != null)
             {
-                interactionPrompt.text = promptMessage;
+                interactionPrompt.text = MobileWebGLControls.ResolveInteractionPrompt(promptMessage);
                 interactionPrompt.gameObject.SetActive(visible && isAvailable && !isCompleted);
             }
         }

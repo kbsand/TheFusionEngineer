@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TheFusionEngineer.Core;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Missions
 {
@@ -20,8 +21,8 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private Image progressFill;
         [SerializeField] private Text promptLabel;
         [SerializeField] private Text percentLabel;
-        [SerializeField] private string prompt = "Hold E";
-        [SerializeField] private string lockedPrompt = "Interaction Locked";
+        [SerializeField] private string prompt = "E 키를 길게 누르세요";
+        [SerializeField] private string lockedPrompt = "상호작용이 잠겨 있습니다";
         [SerializeField, Min(0.1f)] private float holdDuration = 2f;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.7f;
         [SerializeField] private bool startsAvailable = true;
@@ -46,6 +47,9 @@ namespace TheFusionEngineer.Missions
         private bool hasLoggedHoldPlayback;
 
         public event Action Completed;
+
+        public static event Action<Transform> HoldStarted;
+        public static event Action<Transform> HoldStopped;
 
         public bool IsCompleted => isCompleted;
         public bool IsAvailable => isAvailable;
@@ -157,7 +161,7 @@ namespace TheFusionEngineer.Missions
             string promptText,
             float duration,
             bool availableAtStart,
-            string lockedPromptText = "Interaction Locked",
+            string lockedPromptText = "상호작용이 잠겨 있습니다",
             bool canRepeat = false,
             float distance = 2.7f,
             bool requireTrigger = true,
@@ -271,6 +275,7 @@ namespace TheFusionEngineer.Missions
             if (!isHolding)
             {
                 isHolding = true;
+                HoldStarted?.Invoke(player);
                 heldTime = 0f;
                 StartHoldSound();
                 SetProgress(0f);
@@ -359,7 +364,7 @@ namespace TheFusionEngineer.Missions
         private void ResetProgress()
         {
             heldTime = 0f;
-            isHolding = false;
+            StopHoldingAnimation();
             StopHoldSound();
             SetProgress(0f);
         }
@@ -450,7 +455,8 @@ namespace TheFusionEngineer.Missions
                 return;
             }
 
-            promptLabel.text = isAvailable ? prompt : lockedPrompt;
+            string value = isAvailable ? prompt : lockedPrompt;
+            promptLabel.text = MobileWebGLControls.ResolveInteractionPrompt(value);
             promptLabel.gameObject.SetActive(true);
         }
 
@@ -478,7 +484,7 @@ namespace TheFusionEngineer.Missions
         private void HideProgress()
         {
             heldTime = 0f;
-            isHolding = false;
+            StopHoldingAnimation();
             SetProgress(0f);
             if (progressRoot != null)
             {
@@ -491,6 +497,17 @@ namespace TheFusionEngineer.Missions
             {
                 percentLabel.gameObject.SetActive(false);
             }
+        }
+
+        private void StopHoldingAnimation()
+        {
+            if (!isHolding)
+            {
+                return;
+            }
+
+            isHolding = false;
+            HoldStopped?.Invoke(player);
         }
 
         private void HideAllUI()

@@ -3,6 +3,7 @@ using TheFusionEngineer.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Missions
 {
@@ -32,6 +33,7 @@ namespace TheFusionEngineer.Missions
         private bool isUnlocked;
         private bool hasEntered;
         private bool wasInRange;
+        private string interactionPromptText;
 
         public bool IsUnlocked => isUnlocked;
         public bool HasEntered => hasEntered;
@@ -45,6 +47,7 @@ namespace TheFusionEngineer.Missions
             interactAction = inputActions?.FindAction("Player/Interact", true);
             visualProperties = new MaterialPropertyBlock();
             sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
+            interactionPromptText = interactionPrompt != null ? interactionPrompt.text : string.Empty;
             if (holdInteraction != null)
             {
                 holdInteraction.Completed += EnterPortal;
@@ -97,7 +100,7 @@ namespace TheFusionEngineer.Missions
 
                 if (isInRange)
                 {
-                    guidance?.MarkPortalReached();
+                    // guidance?.MarkPortalReached();    가까이 가도 사라지지 않도록
                 }
             }
 
@@ -155,6 +158,7 @@ namespace TheFusionEngineer.Missions
             portalLight = activationLight;
             careerLabel = label;
             interactionPrompt = prompt;
+            interactionPromptText = prompt != null ? prompt.text : string.Empty;
             unlockMessage = unlockedMessage;
             interactionDistance = distance;
         }
@@ -192,7 +196,7 @@ namespace TheFusionEngineer.Missions
             isUnlocked = false;
             hasEntered = false;
             wasInRange = false;
-            holdInteraction?.SetAvailable(false, "Acquire Career Core First");
+            holdInteraction?.SetAvailable(false, "먼저 CAREER CORE를 획득하세요");
 
             if (interactionCollider != null)
             {
@@ -226,6 +230,7 @@ namespace TheFusionEngineer.Missions
             }
 
             hasEntered = true;
+            guidance?.MarkPortalReached(); // 실제 포탈 진입 시 화살표 제거
             PersistentSfxPlayer.Play(enterPortalClip, enterPortalVolume);
             SetPromptVisible(false);
             StartCoroutine(EnterPortalRoutine());
@@ -268,6 +273,8 @@ namespace TheFusionEngineer.Missions
 
             if (interactionPrompt != null)
             {
+                interactionPrompt.text =
+                    MobileWebGLControls.ResolveInteractionPrompt(interactionPromptText);
                 interactionPrompt.gameObject.SetActive(visible && isUnlocked && !hasEntered);
             }
         }

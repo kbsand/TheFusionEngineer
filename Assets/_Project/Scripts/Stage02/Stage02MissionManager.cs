@@ -3,6 +3,7 @@ using TheFusionEngineer.Missions;
 using UnityEngine;
 using UnityEngine.UI;
 using TheFusionEngineer.Core;
+using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Stage02
 {
@@ -22,15 +23,22 @@ namespace TheFusionEngineer.Stage02
         [SerializeField, Range(0f, 1f)] private float completionVolume = 0.85f;
 
         [Header("Localized Text")]
-        [SerializeField] private string missionAText = "MISSION A\nSYNCHRONIZE SSM MONITORING SYSTEM";
-        [SerializeField] private string missionBText = "MISSION B\nRESTORE LINUX ANALYSIS SERVER";
-        [SerializeField] private string missionACompleteText = "SSM SYSTEM SYNCHRONIZED\nANNUAL COST SAVING: KRW 170,000,000";
-        [SerializeField] private string missionBCompleteText = "MEMORY POOL RESTORED\nANNUAL COST SAVING: KRW 155,000,000";
-        [SerializeField] private string acquiredText = "CAREER CORE 02: ACQUIRED";
-        [SerializeField] private string finalMessageText = "FULL-STACK + BACKEND\nARCHITECTURE COMPLETE";
+        [SerializeField] private string missionAText = "미션 A\nSSM MONITORING 동기화";
+        [SerializeField] private string missionBText = "미션 B\nLINUX ANALYSIS SERVER 복구";
+        [SerializeField] private string missionACompleteText = "SSM MONITORING 동기화 완료\n연간 비용 절감: 1억 7천만 원";
+        [SerializeField] private string missionBCompleteText = "메모리 풀 복구 완료\n연간 비용 절감: 1억 5,500만 원";
+        [SerializeField] private string acquiredText = "CAREER CORE 02: 획득";
+        [SerializeField] private string finalMessageText = "FULL-STACK + BACKEND\n아키텍처 구축 완료";
+
+        [Header("Objective Banner")]
+        [SerializeField] private string missionAObjectiveHint =
+            "SSM MONITORING으로 이동해 E 키를 길게 눌러 동기화하세요.";
+        [SerializeField] private string missionBObjectiveHint =
+            "LINUX ANALYSIS SERVER로 이동해 E 키를 길게 눌러 복구하세요.";
 
         private Coroutine messageRoutine;
         private bool isStageComplete;
+        private MissionObjectiveBanner objectiveBanner;
 
         public bool IsStageComplete => isStageComplete;
 
@@ -49,10 +57,16 @@ namespace TheFusionEngineer.Stage02
             missionB?.SetAvailable(false);
             roleBadge?.ShowMissionARole();
             SetMissionText(missionAText);
+            objectiveBanner = MissionObjectiveBanner.AttachTo(this);
+            objectiveBanner.SetAutoCompact(true);
+            objectiveBanner.Show(
+                "현재 미션  ·  1 / 2",
+                ExtractMissionTitle(missionAText),
+                missionAObjectiveHint);
 
             if (careerCoreText != null)
             {
-                careerCoreText.text = "CAREER CORE 02: LOCKED";
+                careerCoreText.text = "CAREER CORE 02: 잠김";
             }
 
             if (centerMessage != null)
@@ -102,6 +116,10 @@ namespace TheFusionEngineer.Stage02
                 missionB?.SetAvailable(true);
                 roleBadge?.ShowMissionBRole();
                 SetMissionText(missionBText);
+                objectiveBanner?.Show(
+                    "현재 미션  ·  2 / 2",
+                    ExtractMissionTitle(missionBText),
+                    missionBObjectiveHint);
                 return;
             }
 
@@ -119,6 +137,7 @@ namespace TheFusionEngineer.Stage02
                 stagePortal?.UnlockPortal();
                 ladder?.SetUnlocked(true);
                 SetMissionText(finalMessageText);
+                objectiveBanner?.Hide();
 
                 if (messageRoutine != null)
                 {
@@ -166,6 +185,18 @@ namespace TheFusionEngineer.Stage02
             {
                 missionText.text = value;
             }
+        }
+
+        private static string ExtractMissionTitle(string mission)
+        {
+            if (string.IsNullOrWhiteSpace(mission))
+            {
+                return "현재 미션을 완료하세요";
+            }
+
+            int firstLineEnd = mission.IndexOf('\n');
+            string title = firstLineEnd >= 0 ? mission[(firstLineEnd + 1)..] : mission;
+            return title.Replace("\r", string.Empty).Replace("\n", " ").Trim();
         }
     }
 }
