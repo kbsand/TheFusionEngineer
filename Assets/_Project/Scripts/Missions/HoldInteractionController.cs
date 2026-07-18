@@ -9,6 +9,10 @@ using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Missions
 {
+    /// <summary>
+    /// 플레이어가 사용 키나 모바일 사용 버튼을 일정 시간 누르는 상호작용을 처리합니다.
+    /// 진행 UI와 효과음, 시작·중단 이벤트를 한곳에서 관리합니다.
+    /// </summary>
     public sealed class HoldInteractionController : MonoBehaviour
     {
         private static readonly List<HoldInteractionController> Instances = new();
@@ -54,6 +58,7 @@ namespace TheFusionEngineer.Missions
         public bool IsCompleted => isCompleted;
         public bool IsAvailable => isAvailable;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             interactAction = inputActions?.FindAction("Player/Interact", true);
@@ -64,6 +69,7 @@ namespace TheFusionEngineer.Missions
             }
             ResetProgress();
             HideAllUI();
+            // [런타임 자동 생성] 길게 누르기 진행 효과음 전용 AudioSource입니다.
             holdSource = gameObject.AddComponent<AudioSource>();
             holdSource.playOnAwake = false;
             holdSource.loop = true;
@@ -78,6 +84,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // Unity가 컴포넌트를 활성화할 때 입력과 이벤트 연결을 시작합니다.
         private void OnEnable()
         {
             if (!Instances.Contains(this))
@@ -88,6 +95,7 @@ namespace TheFusionEngineer.Missions
             interactAction?.Enable();
         }
 
+        // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
         private void OnDisable()
         {
             Instances.Remove(this);
@@ -104,6 +112,7 @@ namespace TheFusionEngineer.Missions
             StopHoldSound();
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             if (reversedHoldClip != null)
@@ -112,11 +121,13 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             EvaluateRange();
         }
 
+        // 다른 오브젝트의 이동이 끝난 뒤 후속 위치와 회전을 갱신합니다.
         private void LateUpdate()
         {
             HoldInteractionController closest = FindClosestFor(player);
@@ -132,6 +143,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 다른 Collider가 Trigger 영역에 들어오면 진입 상태를 처리합니다.
         private void OnTriggerEnter(Collider other)
         {
             if (IsPlayer(other))
@@ -140,6 +152,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 다른 Collider가 Trigger 영역에서 나가면 이탈 상태를 처리합니다.
         private void OnTriggerExit(Collider other)
         {
             if (!IsPlayer(other))
@@ -152,6 +165,7 @@ namespace TheFusionEngineer.Missions
             CancelAndHide();
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(
             InputActionAsset actions,
             Transform playerTransform,
@@ -182,11 +196,15 @@ namespace TheFusionEngineer.Missions
             interactionPoints = points ?? Array.Empty<Transform>();
         }
 
+        /// <summary>
+        /// 길게 누르기 상호작용의 사용 가능 여부를 변경하고 진행 중 입력을 안전하게 정리합니다.
+        /// </summary>
         public void SetAvailable(bool available)
         {
             SetAvailable(available, lockedPrompt);
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigurePercentLabel(Text label)
         {
             percentLabel = label;
@@ -194,6 +212,9 @@ namespace TheFusionEngineer.Missions
             percentLabel?.gameObject.SetActive(false);
         }
 
+        /// <summary>
+        /// 사용 가능 상태와 함께 잠금 상태에서 보여줄 안내 문구를 변경합니다.
+        /// </summary>
         public void SetAvailable(bool available, string unavailablePrompt)
         {
             lockedPrompt = unavailablePrompt;
@@ -210,6 +231,9 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        /// <summary>
+        /// 재사용되는 단말기나 포탈을 위해 완료 기록과 진행 UI를 초기 상태로 되돌립니다.
+        /// </summary>
         public void ResetForReuse()
         {
             if (!repeatable)
@@ -224,6 +248,7 @@ namespace TheFusionEngineer.Missions
             HideProgress();
         }
 
+        // EvaluateRange 관련 게임 로직을 수행합니다.
         private void EvaluateRange()
         {
             currentSqrDistance = GetClosestSqrDistance();
@@ -237,6 +262,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // ProcessActiveInteraction 관련 게임 로직을 수행합니다.
         private void ProcessActiveInteraction()
         {
             if (!isInRange || isCompleted)
@@ -300,6 +326,7 @@ namespace TheFusionEngineer.Missions
             StartCoroutine(HideCompletedProgress());
         }
 
+        // FindClosestFor 관련 게임 로직을 수행합니다.
         private static HoldInteractionController FindClosestFor(Transform targetPlayer)
         {
             HoldInteractionController closest = null;
@@ -325,6 +352,7 @@ namespace TheFusionEngineer.Missions
             return closest;
         }
 
+        // GetClosestSqrDistance 관련 게임 로직을 수행합니다.
         private float GetClosestSqrDistance()
         {
             if (player == null)
@@ -344,6 +372,7 @@ namespace TheFusionEngineer.Missions
             return closest;
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private bool IsPlayer(Collider other)
         {
             if (player == null || other == null)
@@ -355,12 +384,14 @@ namespace TheFusionEngineer.Missions
             return controller != null && controller.transform == player;
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private void CancelAndHide()
         {
             ResetProgress();
             HideAllUI();
         }
 
+        // ResetProgress 관련 게임 로직을 수행합니다.
         private void ResetProgress()
         {
             heldTime = 0f;
@@ -369,6 +400,7 @@ namespace TheFusionEngineer.Missions
             SetProgress(0f);
         }
 
+        // StartHoldSound 관련 게임 로직을 수행합니다.
         private void StartHoldSound()
         {
             if (holdSource == null || reversedHoldClip == null)
@@ -389,6 +421,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static AudioClip CreateReversedClip(AudioClip source)
         {
             if (source == null)
@@ -427,6 +460,7 @@ namespace TheFusionEngineer.Missions
             return reversed;
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void StopHoldSound()
         {
             if (holdSource != null && holdSource.isPlaying)
@@ -435,6 +469,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetProgress(float normalized)
         {
             if (progressFill != null)
@@ -448,6 +483,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private void ShowPrompt()
         {
             if (promptLabel == null)
@@ -460,6 +496,7 @@ namespace TheFusionEngineer.Missions
             promptLabel.gameObject.SetActive(true);
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void HidePrompt()
         {
             if (promptLabel != null)
@@ -468,6 +505,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private void ShowProgress()
         {
             if (progressRoot != null)
@@ -481,6 +519,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void HideProgress()
         {
             heldTime = 0f;
@@ -499,6 +538,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void StopHoldingAnimation()
         {
             if (!isHolding)
@@ -510,12 +550,14 @@ namespace TheFusionEngineer.Missions
             HoldStopped?.Invoke(player);
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void HideAllUI()
         {
             HidePrompt();
             HideProgress();
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private IEnumerator HideCompletedProgress()
         {
             yield return null;

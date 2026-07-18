@@ -62,6 +62,7 @@ namespace TheFusionEngineer.Missions
             SetVisible(false);
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             foreach (Material material in runtimeArrowMaterials)
@@ -135,6 +136,7 @@ namespace TheFusionEngineer.Missions
                 {
                     leftSegment = renderer.transform;
                 }
+                // if 관련 게임 로직을 수행합니다.
                 else if (rightSegment == null && segmentName.Contains("right"))
                 {
                     rightSegment = renderer.transform;
@@ -178,6 +180,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // ApplyArrowAppearance 관련 게임 로직을 수행합니다.
         private void ApplyArrowAppearance()
         {
             foreach (Renderer renderer in guidanceArrow.GetComponentsInChildren<Renderer>(true))
@@ -227,6 +230,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // Cross 관련 게임 로직을 수행합니다.
         private static float Cross(Vector2 first, Vector2 second)
         {
             return first.x * second.y - first.y * second.x;
@@ -234,6 +238,9 @@ namespace TheFusionEngineer.Missions
 
         /// <summary>
         /// 아직 확인하지 않은 포탈 안내를 화면에 표시합니다.
+        /// </summary>
+        /// <summary>
+        /// 다음 이동 목표를 안내하도록 형광 화살표를 표시합니다.
         /// </summary>
         public void ShowGuidance()
         {
@@ -248,6 +255,9 @@ namespace TheFusionEngineer.Missions
 
         /// <summary>
         /// 플레이어가 포탈 안내를 확인한 것으로 기록하고 안내를 숨깁니다.
+        /// </summary>
+        /// <summary>
+        /// 플레이어가 실제 포탈 진입을 완료했음을 기록하고 안내 화살표를 숨깁니다.
         /// </summary>
         public void MarkPortalReached()
         {

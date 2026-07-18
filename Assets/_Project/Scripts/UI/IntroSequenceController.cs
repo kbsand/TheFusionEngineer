@@ -50,6 +50,7 @@ namespace TheFusionEngineer.UI
         public bool IsPlaying => isPlaying;
         public bool HasCompleted => hasCompleted;
 
+        // Unity가 첫 프레임 전에 게임 진행 상태를 초기화합니다.
         private void Start()
         {
             if (!hasCompleted)
@@ -58,6 +59,7 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
         private void OnDisable()
         {
             if (!isPlaying)
@@ -74,6 +76,7 @@ namespace TheFusionEngineer.UI
             FinishIntro(false);
         }
 
+        // PlayIntro 관련 게임 로직을 수행합니다.
         private IEnumerator PlayIntro()
         {
             isPlaying = true;
@@ -144,6 +147,7 @@ namespace TheFusionEngineer.UI
             FinishIntro(true);
         }
 
+        // WasSkipPressed 관련 게임 로직을 수행합니다.
         private static bool WasSkipPressed()
         {
             Keyboard keyboard = Keyboard.current;
@@ -151,6 +155,7 @@ namespace TheFusionEngineer.UI
                 (keyboard.spaceKey.wasPressedThisFrame || keyboard.eKey.wasPressedThisFrame);
         }
 
+        // ApplyCopy 관련 게임 로직을 수행합니다.
         private void ApplyCopy()
         {
             if (periodText != null) periodText.text = period;
@@ -159,6 +164,7 @@ namespace TheFusionEngineer.UI
             if (storyText != null) storyText.text = story;
         }
 
+        // CaptureAndLockPlayerInput 관련 게임 로직을 수행합니다.
         private void CaptureAndLockPlayerInput()
         {
             movementWasEnabled = playerMovement != null && playerMovement.enabled;
@@ -182,6 +188,7 @@ namespace TheFusionEngineer.UI
             interactAction?.Disable();
         }
 
+        // RestorePlayerInput 관련 게임 로직을 수행합니다.
         private void RestorePlayerInput()
         {
             if (playerMovement != null)
@@ -204,6 +211,7 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        // FinishIntro 관련 게임 로직을 수행합니다.
         private void FinishIntro(bool completed)
         {
             RestorePlayerInput();

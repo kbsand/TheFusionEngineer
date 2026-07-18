@@ -30,6 +30,7 @@ namespace TheFusionEngineer.UI
         private Vector2Int lastScreenSize;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        // Bootstrap 관련 게임 로직을 수행합니다.
         private static void Bootstrap()
         {
             if (instance != null)
@@ -37,11 +38,13 @@ namespace TheFusionEngineer.UI
                 return;
             }
 
+            // [런타임 자동 생성] 씬 전환 후에도 유지되는 조작 안내 관리자입니다.
             GameObject host = new("Gameplay Control Hint");
             instance = host.AddComponent<GameplayControlHint>();
             DontDestroyOnLoad(host);
         }
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -54,11 +57,13 @@ namespace TheFusionEngineer.UI
             SceneManager.sceneLoaded += HandleSceneLoaded;
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             ApplySafeArea();
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= HandleSceneLoaded;
@@ -68,6 +73,7 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        // 입력 또는 게임 이벤트가 발생했을 때 후속 동작을 처리합니다.
         private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
         {
             bool isStageOne = scene.name.Equals(
@@ -84,6 +90,7 @@ namespace TheFusionEngineer.UI
             showRoutine = StartCoroutine(ShowWhenPlayerIsReady());
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private IEnumerator ShowWhenPlayerIsReady()
         {
             // sceneLoaded는 각 컴포넌트의 Start보다 먼저 올 수 있으므로 한 프레임 기다립니다.
@@ -116,13 +123,17 @@ namespace TheFusionEngineer.UI
             CreateUI();
             canvasRoot.SetActive(true);
             ApplySafeArea(true);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(0f, 1f, 0.2f);
+            // WaitForSecondsRealtime 관련 게임 로직을 수행합니다.
             yield return new WaitForSecondsRealtime(VisibleDuration);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(1f, 0f, 0.28f);
             canvasRoot.SetActive(false);
             showRoutine = null;
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private void CreateUI()
         {
             if (canvasRoot != null)
@@ -130,6 +141,7 @@ namespace TheFusionEngineer.UI
                 return;
             }
 
+            // [런타임 자동 생성] Stage1에서 한 번만 표시할 안내 Canvas 계층입니다.
             canvasRoot = new GameObject(
                 "Gameplay Control Hint Canvas",
                 typeof(RectTransform),
@@ -221,6 +233,7 @@ namespace TheFusionEngineer.UI
             canvasRoot.SetActive(false);
         }
 
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
         private void StopShowRoutine()
         {
             if (showRoutine == null)
@@ -232,6 +245,7 @@ namespace TheFusionEngineer.UI
             showRoutine = null;
         }
 
+        // Fade 관련 게임 로직을 수행합니다.
         private IEnumerator Fade(float from, float to, float duration)
         {
             float elapsed = 0f;
@@ -246,6 +260,7 @@ namespace TheFusionEngineer.UI
             hintGroup.alpha = to;
         }
 
+        // ApplySafeArea 관련 게임 로직을 수행합니다.
         private void ApplySafeArea(bool force = false)
         {
             if (safeAreaRoot == null || Screen.width <= 0 || Screen.height <= 0)
@@ -268,6 +283,7 @@ namespace TheFusionEngineer.UI
             safeAreaRoot.offsetMax = Vector2.zero;
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static RectTransform CreateRect(string name, Transform parent)
         {
             GameObject target = new(name, typeof(RectTransform));

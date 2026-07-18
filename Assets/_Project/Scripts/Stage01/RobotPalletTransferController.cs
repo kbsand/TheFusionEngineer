@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace TheFusionEngineer.Stage01
 {
+    /// <summary>
+    /// Stage1 로봇이 팔레트를 집어 지정 위치로 옮기는 반복 연출을 제어합니다.
+    /// </summary>
     public sealed class RobotPalletTransferController : MonoBehaviour
     {
         [Header("Robot")]
@@ -50,6 +53,7 @@ namespace TheFusionEngineer.Stage01
         private bool transferInProgress;
         private bool completedSingleCycle;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             if (robotRoot != null) initialRobotRotation = robotRoot.rotation;
@@ -61,6 +65,7 @@ namespace TheFusionEngineer.Stage01
             SetIndicatorColor(Color.white);
         }
 
+        // Unity가 컴포넌트를 활성화할 때 입력과 이벤트 연결을 시작합니다.
         private void OnEnable()
         {
             if (monitorRoutine == null)
@@ -69,6 +74,7 @@ namespace TheFusionEngineer.Stage01
             }
         }
 
+        // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
         private void OnDisable()
         {
             if (monitorRoutine != null)
@@ -82,6 +88,7 @@ namespace TheFusionEngineer.Stage01
             SetIndicatorColor(Color.white);
         }
 
+        // 다른 오브젝트의 이동이 끝난 뒤 후속 위치와 회전을 갱신합니다.
         private void LateUpdate()
         {
             if (activeCargo != null && transferInProgress)
@@ -98,6 +105,7 @@ namespace TheFusionEngineer.Stage01
             }
         }
 
+        // MonitorTransfers 관련 게임 로직을 수행합니다.
         private IEnumerator MonitorTransfers()
         {
             WaitForSeconds wait = new WaitForSeconds(Mathf.Max(0.05f, scanInterval));
@@ -108,6 +116,7 @@ namespace TheFusionEngineer.Stage01
                     Transform candidate = FindClosestCargo();
                     if (candidate != null)
                     {
+                        // TransferCargo 관련 게임 로직을 수행합니다.
                         yield return TransferCargo(candidate, palletSlots[nextSlotIndex]);
                     }
                 }
@@ -116,6 +125,7 @@ namespace TheFusionEngineer.Stage01
             }
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private bool IsReadyForTransfer()
         {
             if (plcMission == null || !plcMission.IsCompleted || pickPoint == null || carryPoint == null)
@@ -131,6 +141,7 @@ namespace TheFusionEngineer.Stage01
             return repeatCycle || !completedSingleCycle;
         }
 
+        // FindClosestCargo 관련 게임 로직을 수행합니다.
         private Transform FindClosestCargo()
         {
             Transform closest = null;
@@ -153,6 +164,7 @@ namespace TheFusionEngineer.Stage01
             return closest;
         }
 
+        // TransferCargo 관련 게임 로직을 수행합니다.
         private IEnumerator TransferCargo(Transform cargo, Transform slot)
         {
             if (cargo == null || slot == null || gripper == null || robotRoot == null)
@@ -167,8 +179,11 @@ namespace TheFusionEngineer.Stage01
             controlledRotation = cargo.rotation;
 
             SetIndicatorColor(new Color(1f, 0.22f, 0.02f));
+            // RotateRobotTowards 관련 게임 로직을 수행합니다.
             yield return RotateRobotTowards(pickPoint.position, rotateDuration);
+            // PoseJoints 관련 게임 로직을 수행합니다.
             yield return PoseJoints(true, rotateDuration);
+            // MoveControlledCargo 관련 게임 로직을 수행합니다.
             yield return MoveControlledCargo(gripper.position, gripper.rotation, pickupDuration);
 
             cargo.SetParent(gripper, true);
@@ -176,8 +191,11 @@ namespace TheFusionEngineer.Stage01
             controlledRotation = gripper.rotation;
             SetIndicatorColor(new Color(0.05f, 1f, 0.55f));
 
+            // MoveControlledCargo 관련 게임 로직을 수행합니다.
             yield return MoveControlledCargo(carryPoint.position, carryPoint.rotation, pickupDuration);
+            // RotateRobotTowards 관련 게임 로직을 수행합니다.
             yield return RotateRobotTowards(slot.position, rotateDuration);
+            // MoveControlledCargo 관련 게임 로직을 수행합니다.
             yield return MoveControlledCargo(slot.position, slot.rotation, placeDuration);
 
             cargo.SetParent(slot, true);
@@ -188,16 +206,20 @@ namespace TheFusionEngineer.Stage01
             activeCargo = null;
 
             SetIndicatorColor(Color.white);
+            // PoseJoints 관련 게임 로직을 수행합니다.
             yield return PoseJoints(false, rotateDuration);
+            // RotateRobotTo 관련 게임 로직을 수행합니다.
             yield return RotateRobotTo(initialRobotRotation, rotateDuration);
 
             transferInProgress = false;
             if (cycleDelay > 0f)
             {
+                // WaitForSeconds 관련 게임 로직을 수행합니다.
                 yield return new WaitForSeconds(cycleDelay);
             }
         }
 
+        // RotateRobotTowards 관련 게임 로직을 수행합니다.
         private IEnumerator RotateRobotTowards(Vector3 target, float duration)
         {
             Vector3 direction = target - robotRoot.position;
@@ -208,9 +230,11 @@ namespace TheFusionEngineer.Stage01
             }
 
             Quaternion targetRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            // RotateRobotTo 관련 게임 로직을 수행합니다.
             yield return RotateRobotTo(targetRotation, duration);
         }
 
+        // RotateRobotTo 관련 게임 로직을 수행합니다.
         private IEnumerator RotateRobotTo(Quaternion targetRotation, float duration)
         {
             Quaternion start = robotRoot.rotation;
@@ -225,6 +249,7 @@ namespace TheFusionEngineer.Stage01
             robotRoot.rotation = targetRotation;
         }
 
+        // PoseJoints 관련 게임 로직을 수행합니다.
         private IEnumerator PoseJoints(bool picking, float duration)
         {
             Quaternion baseTarget = initialBaseRotation * Quaternion.Euler(0f, picking ? 12f : 0f, 0f);
@@ -249,6 +274,7 @@ namespace TheFusionEngineer.Stage01
             }
         }
 
+        // MoveControlledCargo 관련 게임 로직을 수행합니다.
         private IEnumerator MoveControlledCargo(Vector3 targetPosition, Quaternion targetRotation, float duration)
         {
             Vector3 startPosition = controlledPosition;
@@ -267,6 +293,7 @@ namespace TheFusionEngineer.Stage01
             controlledRotation = targetRotation;
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetIndicatorColor(Color color)
         {
             if (gripperIndicator == null || indicatorProperties == null)

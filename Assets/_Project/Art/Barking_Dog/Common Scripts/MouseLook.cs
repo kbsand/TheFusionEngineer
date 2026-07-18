@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 // Daniel Flanigan, 2014
 // This is a combined mouse look and camera move script.
 // The cam move script is by: Francis R. Griffiths-Keam
 
+/// <summary>
+/// [외부 에셋 코드] 마우스로 카메라 시점을 회전하고 키보드로 자유 카메라를 이동시킵니다.
+/// </summary>
 public class MouseLook : MonoBehaviour
 {
 	Vector2 _mouseAbsolute;
@@ -38,6 +41,7 @@ public class MouseLook : MonoBehaviour
 	public KeyCode rightKey = KeyCode.D;
 	private float speedX, speedZ=0;
 
+	// Unity가 첫 프레임 전에 카메라와 캐릭터의 기준 회전값을 저장합니다.
 	void Start ()
 	{
 		// Set target direction to the camera's initial orientation.
@@ -48,6 +52,7 @@ public class MouseLook : MonoBehaviour
 			targetCharacterDirection = characterBody.transform.localRotation.eulerAngles;
 	}
 	
+	// Unity가 매 프레임 마우스 입력을 읽어 카메라와 캐릭터 방향을 갱신합니다.
 	void Update ()
 	{
 		// Ensure the cursor is always locked when set
@@ -95,11 +100,13 @@ public class MouseLook : MonoBehaviour
 		}
 	}
 
+	// Unity의 고정 프레임에서 이동 키 입력, 가속, 감속을 계산해 위치를 갱신합니다.
 	void FixedUpdate(){
 
 		if (Input.GetKey (rightKey)) {
 			speedX += acceleration * Time.deltaTime;
 		}
+		// if 관련 게임 로직을 수행합니다.
 		else if (Input.GetKey (leftKey)) {
 			speedX -= acceleration * Time.deltaTime;
 		}

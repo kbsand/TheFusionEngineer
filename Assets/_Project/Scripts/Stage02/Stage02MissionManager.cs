@@ -7,6 +7,9 @@ using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Stage02
 {
+    /// <summary>
+    /// Stage2의 미션 순서, 현재 목표, 직무 배지 및 포탈 해금을 총괄합니다.
+    /// </summary>
     public sealed class Stage02MissionManager : MonoBehaviour
     {
         [SerializeField] private Stage02Terminal missionA;
@@ -42,6 +45,7 @@ namespace TheFusionEngineer.Stage02
 
         public bool IsStageComplete => isStageComplete;
 
+        // Unity가 첫 프레임 전에 게임 진행 상태를 초기화합니다.
         private void Start()
         {
             if (firstMissionCompleteClip == null)
@@ -79,16 +83,19 @@ namespace TheFusionEngineer.Stage02
             ladder?.SetUnlocked(false);
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigurePortal(StagePortalController portal)
         {
             stagePortal = portal;
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigureLadder(LadderClimbController climbLadder)
         {
             ladder = climbLadder;
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(
             Stage02Terminal terminalA,
             Stage02Terminal terminalB,
@@ -107,8 +114,13 @@ namespace TheFusionEngineer.Stage02
             careerCoreObject = coreObject;
         }
 
+        /// <summary>
+        /// 완료된 단말기가 현재 목표와 일치하는지 검증하고 다음 미션 또는 포탈 해금으로 진행합니다.
+        /// 잘못된 순서의 완료 요청과 중복 완료 요청은 여기서 차단합니다.
+        /// </summary>
         public void CompleteTerminal(Stage02Terminal terminal)
         {
+            // 첫 번째 단말기 완료: 두 번째 단말기와 사다리 이전 단계까지 진행시킵니다.
             if (terminal == missionA && missionA.IsCompleted)
             {
                 ShowMessage(missionACompleteText, 3f);
@@ -123,6 +135,7 @@ namespace TheFusionEngineer.Stage02
                 return;
             }
 
+            // 두 미션이 순서대로 완료된 경우에만 Career Core와 다음 스테이지 경로를 엽니다.
             if (terminal == missionB && missionA != null && missionA.IsCompleted && missionB.IsCompleted)
             {
                 if (careerCoreText != null)
@@ -149,13 +162,17 @@ namespace TheFusionEngineer.Stage02
             }
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private IEnumerator ShowFinalMessages()
         {
+            // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
             yield return ShowMessageRoutine(missionBCompleteText, 3f);
+            // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
             yield return ShowMessageRoutine(finalMessageText, 4f);
             messageRoutine = null;
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private void ShowMessage(string message, float duration)
         {
             if (messageRoutine != null)
@@ -166,6 +183,7 @@ namespace TheFusionEngineer.Stage02
             messageRoutine = StartCoroutine(ShowMessageRoutine(message, duration));
         }
 
+        // 현재 진행 상황을 플레이어가 확인할 수 있도록 화면에 표시합니다.
         private IEnumerator ShowMessageRoutine(string message, float duration)
         {
             if (centerMessage == null)
@@ -175,10 +193,12 @@ namespace TheFusionEngineer.Stage02
 
             centerMessage.text = message;
             centerMessage.gameObject.SetActive(true);
+            // WaitForSeconds 관련 게임 로직을 수행합니다.
             yield return new WaitForSeconds(duration);
             centerMessage.gameObject.SetActive(false);
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetMissionText(string value)
         {
             if (missionText != null)
@@ -187,6 +207,7 @@ namespace TheFusionEngineer.Stage02
             }
         }
 
+        // ExtractMissionTitle 관련 게임 로직을 수행합니다.
         private static string ExtractMissionTitle(string mission)
         {
             if (string.IsNullOrWhiteSpace(mission))

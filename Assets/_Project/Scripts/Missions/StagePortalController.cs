@@ -7,6 +7,9 @@ using TheFusionEngineer.UI;
 
 namespace TheFusionEngineer.Missions
 {
+    /// <summary>
+    /// 스테이지 미션 완료 여부를 확인한 뒤 길게 누르기 입력으로 다음 씬에 진입시킵니다.
+    /// </summary>
     public sealed class StagePortalController : MonoBehaviour
     {
         [SerializeField] private InputActionAsset inputActions;
@@ -38,6 +41,7 @@ namespace TheFusionEngineer.Missions
         public bool IsUnlocked => isUnlocked;
         public bool HasEntered => hasEntered;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             if (enterPortalClip == null)
@@ -46,7 +50,7 @@ namespace TheFusionEngineer.Missions
             }
             interactAction = inputActions?.FindAction("Player/Interact", true);
             visualProperties = new MaterialPropertyBlock();
-            sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
+            sceneTransition ??= FindAnyObjectByType<SceneTransitionController>();
             interactionPromptText = interactionPrompt != null ? interactionPrompt.text : string.Empty;
             if (holdInteraction != null)
             {
@@ -55,17 +59,20 @@ namespace TheFusionEngineer.Missions
             ApplyLockedState();
         }
 
+        // Unity가 컴포넌트를 활성화할 때 입력과 이벤트 연결을 시작합니다.
         private void OnEnable()
         {
             interactAction?.Enable();
         }
 
+        // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
         private void OnDisable()
         {
             interactAction?.Disable();
             SetPromptVisible(false);
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             if (holdInteraction != null)
@@ -74,6 +81,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             if (!isUnlocked || hasEntered)
@@ -100,7 +108,6 @@ namespace TheFusionEngineer.Missions
 
                 if (isInRange)
                 {
-                    // guidance?.MarkPortalReached();    가까이 가도 사라지지 않도록
                 }
             }
 
@@ -110,6 +117,9 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        /// <summary>
+        /// 필수 미션 완료 후 포탈 사용, 안내 화살표, 시각 효과를 활성화합니다.
+        /// </summary>
         public void UnlockPortal()
         {
             if (isUnlocked)
@@ -140,6 +150,7 @@ namespace TheFusionEngineer.Missions
             Debug.Log($"[Stage Portal] Portal unlocked for {targetSceneName}.");
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(
             InputActionAsset actions,
             Transform playerTransform,
@@ -163,11 +174,13 @@ namespace TheFusionEngineer.Missions
             interactionDistance = distance;
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigureGuidance(PortalGuidanceController portalGuidance)
         {
             guidance = portalGuidance;
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigureHoldInteraction(HoldInteractionController interaction)
         {
             holdInteraction = interaction;
@@ -177,6 +190,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void ConfigureTransition(
             SceneTransitionController transition,
             string sceneName,
@@ -191,6 +205,7 @@ namespace TheFusionEngineer.Missions
             unlockMessageDuration = Mathf.Max(0f, messageDuration);
         }
 
+        // ApplyLockedState 관련 게임 로직을 수행합니다.
         private void ApplyLockedState()
         {
             isUnlocked = false;
@@ -222,6 +237,7 @@ namespace TheFusionEngineer.Missions
             SetPortalColor(new Color(0.035f, 0.06f, 0.08f), Color.black);
         }
 
+        // EnterPortal 관련 게임 로직을 수행합니다.
         private void EnterPortal()
         {
             if (hasEntered)
@@ -236,6 +252,7 @@ namespace TheFusionEngineer.Missions
             StartCoroutine(EnterPortalRoutine());
         }
 
+        // EnterPortalRoutine 관련 게임 로직을 수행합니다.
         private IEnumerator EnterPortalRoutine()
         {
             if (unlockMessage != null)
@@ -245,6 +262,7 @@ namespace TheFusionEngineer.Missions
 
             if (unlockMessageDuration > 0f)
             {
+                // WaitForSecondsRealtime 관련 게임 로직을 수행합니다.
                 yield return new WaitForSecondsRealtime(unlockMessageDuration);
             }
 
@@ -253,7 +271,7 @@ namespace TheFusionEngineer.Missions
                 unlockMessage.SetActive(false);
             }
 
-            sceneTransition ??= FindFirstObjectByType<SceneTransitionController>();
+            sceneTransition ??= FindAnyObjectByType<SceneTransitionController>();
             if (sceneTransition == null)
             {
                 hasEntered = false;
@@ -264,6 +282,7 @@ namespace TheFusionEngineer.Missions
             sceneTransition.LoadScene(targetSceneName);
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetPromptVisible(bool visible)
         {
             if (holdInteraction != null)
@@ -279,6 +298,7 @@ namespace TheFusionEngineer.Missions
             }
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetPortalColor(Color baseColor, Color emissionColor)
         {
             foreach (Renderer portalRenderer in portalRenderers)

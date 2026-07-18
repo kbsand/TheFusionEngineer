@@ -937,6 +937,7 @@ GameObject:
   - component: {fileID: 45060696}
   - component: {fileID: 45060698}
   - component: {fileID: 45060697}
+  - component: {fileID: 45060699}
   m_Layer: 0
   m_Name: DocumentSlot_3
   m_TagString: Untagged
@@ -1016,6 +1017,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 45060695}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &45060699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 45060695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &49905192
 GameObject:
   m_ObjectHideFlags: 0
@@ -4638,6 +4651,7 @@ GameObject:
   - component: {fileID: 463893151}
   - component: {fileID: 463893153}
   - component: {fileID: 463893152}
+  - component: {fileID: 463893154}
   m_Layer: 0
   m_Name: DocumentSlot_1
   m_TagString: Untagged
@@ -4717,6 +4731,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 463893150}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &463893154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 463893150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1001 &465639901
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5400,6 +5426,7 @@ GameObject:
   - component: {fileID: 521784668}
   - component: {fileID: 521784670}
   - component: {fileID: 521784669}
+  - component: {fileID: 521784671}
   m_Layer: 0
   m_Name: SCS_ReadyLight
   m_TagString: Untagged
@@ -5479,6 +5506,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 521784667}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &521784671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521784667}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &525112786
 GameObject:
   m_ObjectHideFlags: 0
@@ -5490,6 +5529,7 @@ GameObject:
   - component: {fileID: 525112787}
   - component: {fileID: 525112789}
   - component: {fileID: 525112788}
+  - component: {fileID: 525112790}
   m_Layer: 0
   m_Name: SCS_ReadyLight
   m_TagString: Untagged
@@ -5569,6 +5609,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 525112786}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &525112790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 525112786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &525298901
 GameObject:
   m_ObjectHideFlags: 0
@@ -7469,6 +7521,15 @@ MonoBehaviour:
   jumpHeight: 1.5
   gravity: -20
   animator: {fileID: 1422261760}
+  danceMusicClips:
+  - {fileID: 8300000, guid: 20e4277bbb6a7034581e06aaa5243e3d, type: 3}
+  - {fileID: 8300000, guid: 1edc59b2e7a6a284b80ce0041c201621, type: 3}
+  - {fileID: 8300000, guid: 9b36a2c305735484e85b0c085f43ea7e, type: 3}
+  - {fileID: 8300000, guid: 7ea83d22cd49c924e977c778ca4307b9, type: 3}
+  - {fileID: 8300000, guid: 4d5827144c519414d9a10eabb4130a33, type: 3}
+  danceMusicVolume: 0.8
+  stageMusicSource: {fileID: 2092374121}
+  musicFadeDuration: 0.6
   footstepClip: {fileID: 0}
   footstepInterval: 0.42
   footstepVolume: 0.85
@@ -8370,7 +8431,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ec018fa9ac1c4a5479f736e6e6efcedf, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Stage03.AIMainDisplayController
   displayRenderer: {fileID: 682197085}
   poweredOffColor: {r: 0.008, g: 0.012, b: 0.018, a: 1}
@@ -9427,6 +9488,7 @@ GameObject:
   - component: {fileID: 816731430}
   - component: {fileID: 816731432}
   - component: {fileID: 816731431}
+  - component: {fileID: 816731433}
   m_Layer: 0
   m_Name: DocumentsToVectorDB
   m_TagString: Untagged
@@ -9506,6 +9568,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 816731429}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &816731433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 816731429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &818294722
 GameObject:
   m_ObjectHideFlags: 0
@@ -10636,7 +10710,7 @@ PhysicsMaterial:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name:
+  m_Name: 
   serializedVersion: 2
   m_DynamicFriction: 0.6
   m_StaticFriction: 0.6
@@ -11190,6 +11264,7 @@ GameObject:
   - component: {fileID: 1114000414}
   - component: {fileID: 1114000416}
   - component: {fileID: 1114000415}
+  - component: {fileID: 1114000417}
   m_Layer: 0
   m_Name: LangChainToDashboard
   m_TagString: Untagged
@@ -11269,6 +11344,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1114000413}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1114000417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1114000413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1115463326
 GameObject:
   m_ObjectHideFlags: 0
@@ -14234,6 +14321,7 @@ GameObject:
   - component: {fileID: 1427631296}
   - component: {fileID: 1427631298}
   - component: {fileID: 1427631297}
+  - component: {fileID: 1427631299}
   m_Layer: 0
   m_Name: PLC_To_Vision
   m_TagString: Untagged
@@ -14313,6 +14401,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1427631295}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1427631299
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1427631295}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1442542085
 GameObject:
   m_ObjectHideFlags: 0
@@ -15315,6 +15415,7 @@ GameObject:
   - component: {fileID: 1508049915}
   - component: {fileID: 1508049917}
   - component: {fileID: 1508049916}
+  - component: {fileID: 1508049918}
   m_Layer: 0
   m_Name: DocumentSlot_2
   m_TagString: Untagged
@@ -15394,6 +15495,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1508049914}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1508049918
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508049914}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1517704615
 GameObject:
   m_ObjectHideFlags: 0
@@ -15533,7 +15646,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f9ac36e05f766142837c0f57cfd0be1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Stage03.FactoryDronePatrolController
   waypoints: []
   moveSpeed: 3.2
@@ -15803,7 +15916,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b11c65efc735006478b93c1ae338bdad, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.WorldCollisionBootstrap
 --- !u!4 &1551564952
 Transform:
@@ -17542,7 +17655,6 @@ MonoBehaviour:
   - {fileID: 463893150}
   - {fileID: 1508049914}
   - {fileID: 45060695}
-  - {fileID: 0}
   - {fileID: 816731429}
   - {fileID: 2024044158}
   - {fileID: 1114000413}
@@ -18003,6 +18115,7 @@ GameObject:
   - component: {fileID: 1770479204}
   - component: {fileID: 1770479206}
   - component: {fileID: 1770479205}
+  - component: {fileID: 1770479207}
   m_Layer: 0
   m_Name: Vision_To_LGV
   m_TagString: Untagged
@@ -18082,6 +18195,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1770479203}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1770479207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770479203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1778537976
 GameObject:
   m_ObjectHideFlags: 0
@@ -18590,6 +18715,7 @@ GameObject:
   - component: {fileID: 1905565037}
   - component: {fileID: 1905565039}
   - component: {fileID: 1905565038}
+  - component: {fileID: 1905565040}
   m_Layer: 0
   m_Name: LGV_To_SCS
   m_TagString: Untagged
@@ -18669,13 +18795,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1905565036}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1905565040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1905565036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!134 &1934826427
 PhysicsMaterial:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name:
+  m_Name: 
   serializedVersion: 2
   m_DynamicFriction: 0.6
   m_StaticFriction: 0.6
@@ -19726,6 +19864,7 @@ GameObject:
   - component: {fileID: 2024044159}
   - component: {fileID: 2024044161}
   - component: {fileID: 2024044160}
+  - component: {fileID: 2024044162}
   m_Layer: 0
   m_Name: VectorDBToLangChain
   m_TagString: Untagged
@@ -19805,6 +19944,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2024044158}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2024044162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2024044158}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &2049725978
 GameObject:
   m_ObjectHideFlags: 0

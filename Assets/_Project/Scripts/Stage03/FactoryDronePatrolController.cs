@@ -30,11 +30,13 @@ namespace TheFusionEngineer.Stage03
         private float waitTimer;
         private float hoverPhase;
 
+        // Reset 관련 게임 로직을 수행합니다.
         private void Reset()
         {
             ConfigurePhysics();
         }
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             ResolveWaypoints();
@@ -48,6 +50,7 @@ namespace TheFusionEngineer.Stage03
             CreateDroneLabel();
         }
 
+        // ResolveWaypoints 관련 게임 로직을 수행합니다.
         private void ResolveWaypoints()
         {
             if (waypoints != null)
@@ -67,6 +70,7 @@ namespace TheFusionEngineer.Stage03
                 : System.Array.Empty<Transform>();
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             if (labelRoot != null)
@@ -75,6 +79,7 @@ namespace TheFusionEngineer.Stage03
             }
         }
 
+        // Unity의 고정 프레임에서 물리 기반 동작을 갱신합니다.
         private void FixedUpdate()
         {
             if (waypoints == null || waypoints.Length == 0)
@@ -129,6 +134,7 @@ namespace TheFusionEngineer.Stage03
             }
         }
 
+        // 다른 오브젝트의 이동이 끝난 뒤 후속 위치와 회전을 갱신합니다.
         private void LateUpdate()
         {
             if (labelRoot == null || droneRenderer == null)
@@ -155,6 +161,7 @@ namespace TheFusionEngineer.Stage03
             }
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         private void ConfigurePhysics()
         {
             droneBody = GetComponent<Rigidbody>();
@@ -169,6 +176,7 @@ namespace TheFusionEngineer.Stage03
             droneBody.collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
 
+        // ApplyHoverPosition 관련 게임 로직을 수행합니다.
         private void ApplyHoverPosition()
         {
             float hoverOffset = Mathf.Sin(
@@ -176,11 +184,13 @@ namespace TheFusionEngineer.Stage03
             droneBody.MovePosition(routePosition + Vector3.up * hoverOffset);
         }
 
+        // AdvanceWaypoint 관련 게임 로직을 수행합니다.
         private void AdvanceWaypoint()
         {
             waypointIndex = (waypointIndex + 1) % waypoints.Length;
         }
 
+        // FindNearestWaypointIndex 관련 게임 로직을 수행합니다.
         private int FindNearestWaypointIndex()
         {
             if (waypoints == null || waypoints.Length == 0)
@@ -211,8 +221,10 @@ namespace TheFusionEngineer.Stage03
             return nearestIndex;
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private void CreateDroneLabel()
         {
+            // [런타임 자동 생성] 드론 위에 따라다니는 "Drone" 월드 공간 라벨입니다.
             labelRoot = new GameObject(
                 "Drone Label",
                 typeof(RectTransform),

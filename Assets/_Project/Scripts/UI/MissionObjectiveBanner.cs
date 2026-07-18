@@ -34,6 +34,7 @@ namespace TheFusionEngineer.UI
         private Rect lastSafeArea;
         private Vector2Int lastScreenSize;
 
+        // AttachTo 관련 게임 로직을 수행합니다.
         public static MissionObjectiveBanner AttachTo(Component owner)
         {
             MissionObjectiveBanner existing = owner.GetComponentInChildren<MissionObjectiveBanner>(true);
@@ -42,6 +43,7 @@ namespace TheFusionEngineer.UI
                 return existing;
             }
 
+            // [런타임 자동 생성] 미션 관리자 아래에 붙는 스테이지별 목표 배너입니다.
             GameObject bannerObject = new("Mission Objective Banner");
             bannerObject.transform.SetParent(owner.transform, false);
             return bannerObject.AddComponent<MissionObjectiveBanner>();
@@ -55,16 +57,19 @@ namespace TheFusionEngineer.UI
             autoCompact = enabled;
         }
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             CreateUI();
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             ApplySafeArea();
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             if (presentationRoutine != null)
@@ -78,6 +83,9 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        /// <summary>
+        /// 현재 미션의 진행 번호, 목표 이름, 조작 힌트를 표시하고 지정된 레이아웃 전환을 시작합니다.
+        /// </summary>
         public void Show(string progress, string title, string hint)
         {
             CreateUI();
@@ -94,6 +102,9 @@ namespace TheFusionEngineer.UI
             presentationRoutine = StartCoroutine(Present());
         }
 
+        /// <summary>
+        /// 미션 완료 또는 씬 종료 시 목표 배너와 진행 중 연출을 정리합니다.
+        /// </summary>
         public void Hide()
         {
             if (presentationRoutine != null)
@@ -108,6 +119,7 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private void CreateUI()
         {
             if (canvasRoot != null)
@@ -115,6 +127,7 @@ namespace TheFusionEngineer.UI
                 return;
             }
 
+            // [런타임 자동 생성] 목표 배너 전용 Overlay Canvas와 하위 UI 계층입니다.
             canvasRoot = new GameObject(
                 "Current Mission Banner Canvas",
                 typeof(RectTransform),
@@ -162,6 +175,7 @@ namespace TheFusionEngineer.UI
             RectTransform background = CreateImage(
                 "Panel Background",
                 panelObject.transform,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.015f, 0.025f, 0.045f, 0.94f));
             background.anchorMin = Vector2.zero;
             background.anchorMax = Vector2.one;
@@ -175,6 +189,7 @@ namespace TheFusionEngineer.UI
             RectTransform accent = CreateImage(
                 "Top Accent",
                 panelObject.transform,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(1f, 0.55f, 0.08f, 1f));
             accent.anchorMin = new Vector2(0f, 1f);
             accent.anchorMax = new Vector2(1f, 1f);
@@ -187,9 +202,12 @@ namespace TheFusionEngineer.UI
                 panelObject.transform,
                 19,
                 FontStyles.Bold,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(1f, 0.65f, 0.16f),
                 TextAlignmentOptions.Center,
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(20f, 120f),
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(-20f, -8f));
 
             titleLabel = CreateText(
@@ -199,7 +217,9 @@ namespace TheFusionEngineer.UI
                 FontStyles.Bold,
                 Color.white,
                 TextAlignmentOptions.Center,
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(24f, 67f),
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(-24f, -36f));
             titleLabel.enableAutoSizing = true;
             titleLabel.fontSizeMin = 24;
@@ -210,15 +230,19 @@ namespace TheFusionEngineer.UI
                 panelObject.transform,
                 21,
                 FontStyles.Normal,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.55f, 0.93f, 1f),
                 TextAlignmentOptions.Center,
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(24f, 15f),
+                // Vector2 관련 게임 로직을 수행합니다.
                 new Vector2(-24f, -91f));
 
             ApplySafeArea(true);
             canvasRoot.SetActive(false);
         }
 
+        // Present 관련 게임 로직을 수행합니다.
         private IEnumerator Present()
         {
             IntroSequenceController intro = FindIntroInCurrentScene();
@@ -236,17 +260,21 @@ namespace TheFusionEngineer.UI
             bannerGroup.alpha = 0f;
             canvasRoot.SetActive(true);
             ApplySafeArea(true);
+            // Reveal 관련 게임 로직을 수행합니다.
             yield return Reveal();
 
             if (autoCompact)
             {
+                // WaitForSecondsRealtime 관련 게임 로직을 수행합니다.
                 yield return new WaitForSecondsRealtime(ExpandedHoldDuration);
+                // MoveToCompactLayout 관련 게임 로직을 수행합니다.
                 yield return MoveToCompactLayout();
             }
 
             presentationRoutine = null;
         }
 
+        // Reveal 관련 게임 로직을 수행합니다.
         private IEnumerator Reveal()
         {
             bannerGroup.alpha = 0f;
@@ -263,6 +291,7 @@ namespace TheFusionEngineer.UI
             bannerGroup.alpha = 1f;
         }
 
+        // PreparePresentationLayout 관련 게임 로직을 수행합니다.
         private void PreparePresentationLayout()
         {
             isCompact = false;
@@ -283,6 +312,7 @@ namespace TheFusionEngineer.UI
             panelRect.anchoredPosition = DefaultTopPosition;
         }
 
+        // MoveToCompactLayout 관련 게임 로직을 수행합니다.
         private IEnumerator MoveToCompactLayout()
         {
             Canvas.ForceUpdateCanvases();
@@ -316,6 +346,7 @@ namespace TheFusionEngineer.UI
             ApplySafeArea(true);
         }
 
+        // GetCompactPosition 관련 게임 로직을 수행합니다.
         private Vector2 GetCompactPosition()
         {
             float safeHeight = safeAreaRoot != null && safeAreaRoot.rect.height > 0f
@@ -323,9 +354,11 @@ namespace TheFusionEngineer.UI
                 : ReferenceHeight;
             float scaledPanelHeight = panelRect.rect.height * CompactScale;
             float y = safeHeight * 0.5f - CompactTopMargin - scaledPanelHeight * 0.5f;
+            // Vector2 관련 게임 로직을 수행합니다.
             return new Vector2(0f, y);
         }
 
+        // FindIntroInCurrentScene 관련 게임 로직을 수행합니다.
         private IntroSequenceController FindIntroInCurrentScene()
         {
             IntroSequenceController[] intros =
@@ -341,6 +374,7 @@ namespace TheFusionEngineer.UI
             return null;
         }
 
+        // ApplySafeArea 관련 게임 로직을 수행합니다.
         private void ApplySafeArea(bool force = false)
         {
             if (safeAreaRoot == null || Screen.width <= 0 || Screen.height <= 0)
@@ -369,6 +403,7 @@ namespace TheFusionEngineer.UI
             }
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static RectTransform CreateRect(string name, Transform parent)
         {
             GameObject target = new(name, typeof(RectTransform));
@@ -376,6 +411,7 @@ namespace TheFusionEngineer.UI
             return target.GetComponent<RectTransform>();
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static RectTransform CreateImage(string name, Transform parent, Color color)
         {
             GameObject target = new(name, typeof(RectTransform), typeof(Image));
@@ -386,6 +422,7 @@ namespace TheFusionEngineer.UI
             return target.GetComponent<RectTransform>();
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static TMP_Text CreateText(
             string name,
             Transform parent,

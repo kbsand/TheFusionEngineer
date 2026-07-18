@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace TheFusionEngineer.Stage03
 {
+    /// <summary>
+    /// Stage3 AGV가 지정 경로 지점을 순환하도록 이동시킵니다.
+    /// </summary>
     public sealed class AGVPatrolController : MonoBehaviour
     {
         [SerializeField] private Transform[] waypoints;
@@ -16,6 +19,7 @@ namespace TheFusionEngineer.Stage03
 
         public Transform[] Waypoints => waypoints;
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             if (waiting || waypoints == null || waypoints.Length == 0) return;
@@ -36,9 +40,11 @@ namespace TheFusionEngineer.Stage03
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), turnSpeed * Time.deltaTime);
         }
 
+        // WaitForNextWaypoint 관련 게임 로직을 수행합니다.
         private IEnumerator WaitForNextWaypoint()
         {
             waiting = true;
+            // WaitForSeconds 관련 게임 로직을 수행합니다.
             yield return new WaitForSeconds(waitDuration);
             waypointIndex = (waypointIndex + 1) % waypoints.Length;
             waiting = false;

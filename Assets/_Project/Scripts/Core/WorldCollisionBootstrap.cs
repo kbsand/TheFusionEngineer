@@ -37,11 +37,13 @@ namespace TheFusionEngineer.Core
         private Coroutine applyRoutine;
         private ulong processedSceneHandle = ulong.MaxValue;
 
+        // Unity가 첫 프레임 전에 게임 진행 상태를 초기화합니다.
         private void Start()
         {
             ScheduleCollisionPass(SceneManager.GetActiveScene());
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             Scene activeScene = SceneManager.GetActiveScene();
@@ -54,6 +56,7 @@ namespace TheFusionEngineer.Core
             }
         }
 
+        // ScheduleCollisionPass 관련 게임 로직을 수행합니다.
         private void ScheduleCollisionPass(Scene scene)
         {
             if (applyRoutine != null)
@@ -64,6 +67,7 @@ namespace TheFusionEngineer.Core
             applyRoutine = StartCoroutine(ApplyAfterSceneInitialization(scene));
         }
 
+        // ApplyAfterSceneInitialization 관련 게임 로직을 수행합니다.
         private IEnumerator ApplyAfterSceneInitialization(Scene scene)
         {
             // 씬의 Awake/Start에서 생성하거나 재배치하는 오브젝트까지 반영합니다.
@@ -91,6 +95,7 @@ namespace TheFusionEngineer.Core
                     if (RequiresShapeAccurateCollision(renderer))
                     {
                         MeshCollider collider =
+                            // [런타임 자동 생성] 메시 형태에 맞춘 고정 월드 충돌체입니다.
                             renderer.gameObject.AddComponent<MeshCollider>();
                         collider.sharedMesh =
                             renderer.GetComponents<MeshFilter>()[0].sharedMesh;
@@ -100,6 +105,7 @@ namespace TheFusionEngineer.Core
                     else
                     {
                         BoxCollider collider =
+                            // [런타임 자동 생성] 복잡한 메시 대신 가벼운 박스 충돌체를 붙입니다.
                             renderer.gameObject.AddComponent<BoxCollider>();
                         collider.isTrigger = false;
                         boxColliderCount++;
@@ -115,6 +121,7 @@ namespace TheFusionEngineer.Core
             applyRoutine = null;
         }
 
+        // RequiresShapeAccurateCollision 관련 게임 로직을 수행합니다.
         private static bool RequiresShapeAccurateCollision(
             MeshRenderer renderer)
         {
@@ -129,6 +136,7 @@ namespace TheFusionEngineer.Core
             return largeAxisCount == 3 && Mathf.Max(size.x, size.y, size.z) >= 12f;
         }
 
+        // ShouldAddCollision 관련 게임 로직을 수행합니다.
         private static bool ShouldAddCollision(MeshRenderer renderer)
         {
             if (renderer == null)
@@ -149,7 +157,8 @@ namespace TheFusionEngineer.Core
                 renderer.GetComponentInParent<CharacterController>(true) != null ||
                 renderer.GetComponentInParent<Rigidbody>(true) != null ||
                 renderer.GetComponentInParent<Animator>(true) != null ||
-                renderer.GetComponentInParent<Camera>(true) != null)
+                renderer.GetComponentInParent<Camera>(true) != null ||
+                renderer.GetComponentInParent<NonSolidVisual>(true) != null)
             {
                 return false;
             }
@@ -171,6 +180,7 @@ namespace TheFusionEngineer.Core
             return true;
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private static bool HasNonTriggerColliderInParents(Transform parent)
         {
             while (parent != null)

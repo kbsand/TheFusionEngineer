@@ -33,6 +33,7 @@ namespace TheFusionEngineer.Stage03
 
         public bool IsPoweredOn => isPoweredOn;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             if (displayRenderer == null)
@@ -46,6 +47,7 @@ namespace TheFusionEngineer.Stage03
             SetPoweredOff();
         }
 
+        // 오브젝트가 제거될 때 남아 있는 이벤트와 임시 리소스를 정리합니다.
         private void OnDestroy()
         {
             if (startupRoutine != null)
@@ -80,6 +82,9 @@ namespace TheFusionEngineer.Stage03
         /// <summary>
         /// 짧은 백색 플래시와 화면 깜빡임 뒤 G-BRAIN 온라인 화면을 표시합니다.
         /// </summary>
+        /// <summary>
+        /// G-Brain RAG System 완료 후 메인 디스플레이의 부팅 연출을 한 번만 시작합니다.
+        /// </summary>
         public void TurnOn()
         {
             if (isPoweredOn)
@@ -96,6 +101,9 @@ namespace TheFusionEngineer.Stage03
             startupRoutine = StartCoroutine(PlayStartup());
         }
 
+        /// <summary>
+        /// 초기 또는 리셋 상태로 돌아갈 때 화면과 상태 UI를 전원 꺼짐 상태로 맞춥니다.
+        /// </summary>
         public void SetPoweredOff()
         {
             if (startupRoutine != null)
@@ -112,6 +120,7 @@ namespace TheFusionEngineer.Stage03
             }
         }
 
+        // PlayStartup 관련 게임 로직을 수행합니다.
         private IEnumerator PlayStartup()
         {
             if (statusRoot != null)
@@ -131,10 +140,12 @@ namespace TheFusionEngineer.Stage03
 
             SetVisual(Color.white, Color.white * 5f);
             SetStatusAlpha(0.92f);
+            // WaitForSecondsRealtime 관련 게임 로직을 수행합니다.
             yield return new WaitForSecondsRealtime(0.07f);
 
             SetVisual(poweredOffColor, Color.black);
             SetStatusAlpha(0f);
+            // WaitForSecondsRealtime 관련 게임 로직을 수행합니다.
             yield return new WaitForSecondsRealtime(0.06f);
 
             float elapsed = 0f;
@@ -181,6 +192,7 @@ namespace TheFusionEngineer.Stage03
             startupRoutine = null;
         }
 
+        // PrepareRuntimeMaterials 관련 게임 로직을 수행합니다.
         private void PrepareRuntimeMaterials()
         {
             if (displayRenderer == null)
@@ -211,6 +223,7 @@ namespace TheFusionEngineer.Stage03
             displayRenderer.receiveShadows = false;
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetVisual(Color baseColor, Color emissionColor)
         {
             if (displayRenderer == null)
@@ -225,6 +238,7 @@ namespace TheFusionEngineer.Stage03
             displayRenderer.SetPropertyBlock(visualProperties);
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private void CreateStatusDisplay()
         {
             if (displayRenderer == null || statusRoot != null)
@@ -232,6 +246,7 @@ namespace TheFusionEngineer.Stage03
                 return;
             }
 
+            // [런타임 자동 생성] AI_MainDisplay의 부팅 상태를 표시하는 전용 UI입니다.
             statusRoot = new GameObject(
                 "AI Main Display Status",
                 typeof(RectTransform),
@@ -271,18 +286,21 @@ namespace TheFusionEngineer.Stage03
             RectTransform border = CreateImage(
                 "Screen Border",
                 rootRect,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.08f, 0.95f, 1f, 0.9f));
             Stretch(border, Vector2.zero, Vector2.zero);
 
             RectTransform background = CreateImage(
                 "Screen Background",
                 border,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.005f, 0.025f, 0.04f, 0.96f));
             Stretch(background, new Vector2(5f, 5f), new Vector2(-5f, -5f));
 
             RectTransform topAccent = CreateImage(
                 "Top Accent",
                 background,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.2f, 1f, 0.95f, 0.9f));
             topAccent.anchorMin = new Vector2(0f, 1f);
             topAccent.anchorMax = new Vector2(1f, 1f);
@@ -300,6 +318,7 @@ namespace TheFusionEngineer.Stage03
             scanLine = CreateImage(
                 "Startup Scan Line",
                 background,
+                // Color 관련 게임 로직을 수행합니다.
                 new Color(0.35f, 1f, 1f, 0.55f));
             scanLine.anchorMin = new Vector2(0f, 0.5f);
             scanLine.anchorMax = new Vector2(1f, 0.5f);
@@ -309,6 +328,7 @@ namespace TheFusionEngineer.Stage03
             statusRoot.SetActive(false);
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetStatusAlpha(float alpha)
         {
             if (statusGroup != null)
@@ -317,6 +337,7 @@ namespace TheFusionEngineer.Stage03
             }
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static TMP_Text CreateText(string objectName, Transform parent)
         {
             GameObject textObject = new(
@@ -338,6 +359,7 @@ namespace TheFusionEngineer.Stage03
             return text;
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static RectTransform CreateImage(
             string objectName,
             Transform parent,
@@ -355,6 +377,7 @@ namespace TheFusionEngineer.Stage03
             return image.rectTransform;
         }
 
+        // Stretch 관련 게임 로직을 수행합니다.
         private static void Stretch(
             RectTransform target,
             Vector2 offsetMin,
@@ -366,6 +389,7 @@ namespace TheFusionEngineer.Stage03
             target.offsetMax = offsetMax;
         }
 
+        // ProjectedExtent 관련 게임 로직을 수행합니다.
         private static float ProjectedExtent(Vector3 extents, Vector3 direction)
         {
             Vector3 absoluteDirection = new(

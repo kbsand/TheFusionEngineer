@@ -18,11 +18,13 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
     private double previousEditorTime;
 
     [MenuItem("Tools/Animation Auto Preview")]
+    // OpenWindow 관련 게임 로직을 수행합니다.
     private static void OpenWindow()
     {
         GetWindow<AnimationAutoPreviewWindow>("Animation Preview");
     }
 
+    // Unity가 컴포넌트를 활성화할 때 입력과 이벤트 연결을 시작합니다.
     private void OnEnable()
     {
         CreatePreviewUtility();
@@ -34,6 +36,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         OnProjectSelectionChanged();
     }
 
+    // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
     private void OnDisable()
     {
         Selection.selectionChanged -= OnProjectSelectionChanged;
@@ -44,6 +47,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         previewUtility = null;
     }
 
+    // Unity Editor 화면과 미리보기 상태를 갱신합니다.
     private void OnGUI()
     {
         EditorGUILayout.LabelField("Animation Auto Preview", EditorStyles.boldLabel);
@@ -106,6 +110,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         DrawPreview(previewRect);
     }
 
+    // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
     private void CreatePreviewUtility()
     {
         previewUtility = new PreviewRenderUtility
@@ -146,6 +151,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         Repaint();
     }
 
+    // UpdatePreview 관련 게임 로직을 수행합니다.
     private void UpdatePreview()
     {
         double currentTime = EditorApplication.timeSinceStartup;
@@ -164,6 +170,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         Repaint();
     }
 
+    // SampleCurrentFrame 관련 게임 로직을 수행합니다.
     private void SampleCurrentFrame()
     {
         if (selectedClip == null || previewInstance == null)
@@ -173,6 +180,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         selectedClip.SampleAnimation(previewInstance, previewTime);
     }
 
+    // RebuildPreviewInstance 관련 게임 로직을 수행합니다.
     private void RebuildPreviewInstance()
     {
         DestroyPreviewInstance();
@@ -196,6 +204,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         PositionPreviewCamera();
     }
 
+    // PositionPreviewCamera 관련 게임 로직을 수행합니다.
     private void PositionPreviewCamera()
     {
         Bounds bounds = CalculateBounds(previewInstance);
@@ -209,6 +218,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         previewUtility.camera.transform.LookAt(target);
     }
 
+    // DrawPreview 관련 게임 로직을 수행합니다.
     private void DrawPreview(Rect previewRect)
     {
         if (previewUtility == null || previewInstance == null)
@@ -227,6 +237,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         GUI.DrawTexture(previewRect, result, ScaleMode.StretchToFill, false);
     }
 
+    // DestroyPreviewInstance 관련 게임 로직을 수행합니다.
     private void DestroyPreviewInstance()
     {
         if (previewInstance == null)
@@ -236,11 +247,13 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         previewInstance = null;
     }
 
+    // CalculateBounds 관련 게임 로직을 수행합니다.
     private static Bounds CalculateBounds(GameObject target)
     {
         Renderer[] renderers = target.GetComponentsInChildren<Renderer>();
 
         if (renderers.Length == 0)
+            // Bounds 관련 게임 로직을 수행합니다.
             return new Bounds(target.transform.position, Vector3.one * 2f);
 
         Bounds bounds = renderers[0].bounds;
@@ -251,6 +264,7 @@ public sealed class AnimationAutoPreviewWindow : EditorWindow
         return bounds;
     }
 
+    // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
     private static void SetHideFlagsRecursively(Transform root)
     {
         root.gameObject.hideFlags = HideFlags.HideAndDontSave;

@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 
 namespace TheFusionEngineer.Core
 {
+    /// <summary>
+    /// 화면 페이드와 씬 로딩을 한곳에서 처리하고 중복 전환을 방지합니다.
+    /// </summary>
     public sealed class SceneTransitionController : MonoBehaviour
     {
         [SerializeField] private CanvasGroup fadePanel;
@@ -14,6 +17,7 @@ namespace TheFusionEngineer.Core
 
         public bool IsTransitioning => isTransitioning;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             if (fadePanel == null)
@@ -26,15 +30,20 @@ namespace TheFusionEngineer.Core
             fadePanel.blocksRaycasts = true;
         }
 
+        // Unity가 첫 프레임 전에 게임 진행 상태를 초기화합니다.
         private IEnumerator Start()
         {
             if (fadePanel != null)
             {
+                // Fade 관련 게임 로직을 수행합니다.
                 yield return Fade(1f, 0f);
                 fadePanel.blocksRaycasts = false;
             }
         }
 
+        /// <summary>
+        /// 중복 요청을 막은 뒤 화면을 페이드아웃하고 지정한 씬을 비동기로 불러옵니다.
+        /// </summary>
         public void LoadScene(string sceneName)
         {
             if (isTransitioning)
@@ -51,12 +60,14 @@ namespace TheFusionEngineer.Core
             StartCoroutine(LoadSceneRoutine(sceneName));
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(CanvasGroup panel, float duration)
         {
             fadePanel = panel;
             fadeDuration = Mathf.Max(0.01f, duration);
         }
 
+        // LoadSceneRoutine 관련 게임 로직을 수행합니다.
         private IEnumerator LoadSceneRoutine(string sceneName)
         {
             isTransitioning = true;
@@ -64,6 +75,7 @@ namespace TheFusionEngineer.Core
             if (fadePanel != null)
             {
                 fadePanel.blocksRaycasts = true;
+                // Fade 관련 게임 로직을 수행합니다.
                 yield return Fade(fadePanel.alpha, 1f);
             }
 
@@ -92,6 +104,7 @@ namespace TheFusionEngineer.Core
             }
         }
 
+        // Fade 관련 게임 로직을 수행합니다.
         private IEnumerator Fade(float from, float to)
         {
             float elapsed = 0f;

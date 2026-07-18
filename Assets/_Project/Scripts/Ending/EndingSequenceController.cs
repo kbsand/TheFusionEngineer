@@ -5,6 +5,9 @@ using UnityEngine.Rendering;
 
 namespace TheFusionEngineer.Ending
 {
+    /// <summary>
+    /// 최종 스테이지 이후 엔딩 연출과 결과 UI가 나타나는 순서를 총괄합니다.
+    /// </summary>
     public sealed class EndingSequenceController : MonoBehaviour
     {
         [Header("Career Cores")]
@@ -50,6 +53,7 @@ namespace TheFusionEngineer.Ending
         private bool isMerging;
         private bool sequenceFinished;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             coreStartPositions = new Vector3[careerCores.Length];
@@ -70,11 +74,13 @@ namespace TheFusionEngineer.Ending
             ApplyInitialState();
         }
 
+        // Unity가 첫 프레임 전에 게임 진행 상태를 초기화합니다.
         private void Start()
         {
             sequenceRoutine = StartCoroutine(PlaySequence());
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
@@ -113,6 +119,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(
             Transform[] cores,
             Transform[] rings,
@@ -151,8 +158,10 @@ namespace TheFusionEngineer.Ending
             gateInsidePosition = characterEnd;
         }
 
+        // PlaySequence 관련 게임 로직을 수행합니다.
         private IEnumerator PlaySequence()
         {
+            // Wait 관련 게임 로직을 수행합니다.
             yield return Wait(0.35f);
             foreach (Transform core in careerCores)
             {
@@ -163,13 +172,18 @@ namespace TheFusionEngineer.Ending
 
                 core.gameObject.SetActive(true);
                 core.localScale = Vector3.zero;
+                // Scale 관련 게임 로직을 수행합니다.
                 yield return Scale(core, Vector3.zero, Vector3.one, 0.4f);
+                // Wait 관련 게임 로직을 수행합니다.
                 yield return Wait(0.1f);
             }
 
+            // Wait 관련 게임 로직을 수행합니다.
             yield return Wait(1f);
             isMerging = true;
+            // MergeCores 관련 게임 로직을 수행합니다.
             yield return MergeCores(1.15f);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(flashOverlay, 0f, 1f, 0.14f);
 
             foreach (Transform core in careerCores)
@@ -191,12 +205,16 @@ namespace TheFusionEngineer.Ending
                     silhouetteGlow.intensity = revealGlowIntensity;
                 }
 
+                // RevealSilhouette 관련 게임 로직을 수행합니다.
                 yield return RevealSilhouette(0.48f);
             }
 
             SetGroup(fusionText, 1f, false);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(flashOverlay, 1f, 0f, 0.3f);
+            // Wait 관련 게임 로직을 수행합니다.
             yield return Wait(1.5f);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(fusionText, 1f, 0f, 0.3f);
 
             gateLightPanel?.SetActive(true);
@@ -206,9 +224,13 @@ namespace TheFusionEngineer.Ending
                 gateLight.intensity = 0.5f;
             }
 
+            // OpenGate 관련 게임 로직을 수행합니다.
             yield return OpenGate(gateOpenDuration);
+            // WalkToGate 관련 게임 로직을 수행합니다.
             yield return WalkToGate(walkDuration);
+            // FadeSilhouette 관련 게임 로직을 수행합니다.
             yield return FadeSilhouette(0.75f);
+            // Fade 관련 게임 로직을 수행합니다.
             yield return Fade(finalUI, 0f, 1f, 0.6f);
 
             SetGroup(finalUI, 1f, true);
@@ -217,6 +239,7 @@ namespace TheFusionEngineer.Ending
             sequenceRoutine = null;
         }
 
+        // MergeCores 관련 게임 로직을 수행합니다.
         private IEnumerator MergeCores(float duration)
         {
             Vector3[] startPositions = new Vector3[careerCores.Length];
@@ -251,6 +274,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // RevealSilhouette 관련 게임 로직을 수행합니다.
         private IEnumerator RevealSilhouette(float duration)
         {
             float elapsed = 0f;
@@ -275,6 +299,7 @@ namespace TheFusionEngineer.Ending
             SetSilhouetteAlpha(1f);
         }
 
+        // OpenGate 관련 게임 로직을 수행합니다.
         private IEnumerator OpenGate(float duration)
         {
             Vector3 leftOpen = leftDoorClosedPosition + Vector3.left * doorOpenDistance;
@@ -319,6 +344,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // WalkToGate 관련 게임 로직을 수행합니다.
         private IEnumerator WalkToGate(float duration)
         {
             if (silhouetteAnimator != null)
@@ -354,6 +380,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // FadeSilhouette 관련 게임 로직을 수행합니다.
         private IEnumerator FadeSilhouette(float duration)
         {
             float elapsed = 0f;
@@ -374,6 +401,7 @@ namespace TheFusionEngineer.Ending
             playerSilhouette?.gameObject.SetActive(false);
         }
 
+        // SkipToFinalState 관련 게임 로직을 수행합니다.
         private void SkipToFinalState()
         {
             if (sequenceRoutine != null)
@@ -390,6 +418,7 @@ namespace TheFusionEngineer.Ending
             ApplyFinalState();
         }
 
+        // ApplyInitialState 관련 게임 로직을 수행합니다.
         private void ApplyInitialState()
         {
             isMerging = false;
@@ -444,6 +473,7 @@ namespace TheFusionEngineer.Ending
             skipHint?.SetActive(true);
         }
 
+        // ApplyFinalState 관련 게임 로직을 수행합니다.
         private void ApplyFinalState()
         {
             isMerging = true;
@@ -484,6 +514,7 @@ namespace TheFusionEngineer.Ending
             skipHint?.SetActive(false);
         }
 
+        // PrepareSilhouetteMaterials 관련 게임 로직을 수행합니다.
         private void PrepareSilhouetteMaterials()
         {
             silhouetteMaterials = new Material[silhouetteRenderers.Length];
@@ -506,6 +537,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private void SetSilhouetteAlpha(float alpha)
         {
             if (silhouetteMaterials == null)
@@ -535,6 +567,7 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         private static void ConfigureTransparent(Material material)
         {
             if (material == null)
@@ -550,6 +583,7 @@ namespace TheFusionEngineer.Ending
             material.renderQueue = (int)RenderQueue.Transparent;
         }
 
+        // Scale 관련 게임 로직을 수행합니다.
         private static IEnumerator Scale(Transform target, Vector3 from, Vector3 to, float duration)
         {
             float elapsed = 0f;
@@ -563,6 +597,7 @@ namespace TheFusionEngineer.Ending
             target.localScale = to;
         }
 
+        // Fade 관련 게임 로직을 수행합니다.
         private static IEnumerator Fade(CanvasGroup group, float from, float to, float duration)
         {
             if (group == null)
@@ -581,6 +616,7 @@ namespace TheFusionEngineer.Ending
             group.alpha = to;
         }
 
+        // Wait 관련 게임 로직을 수행합니다.
         private static IEnumerator Wait(float duration)
         {
             float elapsed = 0f;
@@ -591,11 +627,13 @@ namespace TheFusionEngineer.Ending
             }
         }
 
+        // Smooth 관련 게임 로직을 수행합니다.
         private static float Smooth(float value)
         {
             return Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(value));
         }
 
+        // 전달받은 값에 맞춰 내부 상태와 화면 표시를 갱신합니다.
         private static void SetGroup(CanvasGroup group, float alpha, bool interactive)
         {
             if (group == null)

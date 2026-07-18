@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TheFusionEngineer.Core;
@@ -6,6 +7,10 @@ using TheFusionEngineer.Missions;
 
 namespace TheFusionEngineer.Player
 {
+    /// <summary>
+    /// 플레이어의 이동·달리기·점프 입력과 Animator, 발소리, 댄스 음악을 함께 제어합니다.
+    /// Inspector에 연결된 InputActionAsset과 Animator를 사용하며 런타임에는 재생용 AudioSource만 자동 생성합니다.
+    /// </summary>
     [RequireComponent(typeof(CharacterController))]
     public sealed class PlayerMovement : MonoBehaviour
     {
@@ -23,6 +28,13 @@ namespace TheFusionEngineer.Player
         [Header("Animation")]
         [SerializeField] private Animator animator;
 
+        [Header("Dance Music")]
+        [Tooltip("DanceStateNames와 같은 순서로 배치된 댄스별 전용 음악입니다.")]
+        [SerializeField] private AudioClip[] danceMusicClips = new AudioClip[5];
+        [SerializeField, Range(0f, 1f)] private float danceMusicVolume = 0.8f;
+        [SerializeField] private AudioSource stageMusicSource;
+        [SerializeField, Min(0.05f)] private float musicFadeDuration = 0.6f;
+
         [Header("Footsteps")]
         [SerializeField] private AudioClip footstepClip;
         [SerializeField, Min(0.05f)] private float footstepInterval = 0.42f;
@@ -37,10 +49,16 @@ namespace TheFusionEngineer.Player
         private float verticalVelocity;
         private float nextFootstepTime;
         private AudioSource footstepSource;
+        private AudioSource danceMusicSource;
+        private Coroutine musicFadeRoutine;
+        private float stageMusicVolume;
+        private bool resumeStageMusicAfterDance;
         private bool hasLoggedFootstepPlayback;
         private bool isDrilling;
         private float actionLockUntil;
         private int previousDanceIndex = -1;
+        private int activeDanceIndex = -1;
+        private float dancePlaybackStartTime;
         private static readonly int SpeedParameter = Animator.StringToHash("Speed");
         private static readonly int IsSprintingParameter = Animator.StringToHash("IsSprinting");
         private static readonly int JumpParameter = Animator.StringToHash("Jump");
@@ -62,6 +80,7 @@ namespace TheFusionEngineer.Player
 
         public event Action MovementInputDetected;
 
+        // Unity가 오브젝트를 초기화할 때 필요한 참조와 초기 상태를 준비합니다.
         private void Awake()
         {
             characterController = GetComponent<CharacterController>();
@@ -74,6 +93,7 @@ namespace TheFusionEngineer.Player
             {
                 footstepClip = GameSfxLibrary.LoadFootstep();
             }
+            // [런타임 자동 생성] 씬에 별도 컴포넌트를 두지 않고 재생 전용 AudioSource를 붙입니다.
             footstepSource = gameObject.AddComponent<AudioSource>();
             footstepSource.playOnAwake = false;
             footstepSource.loop = false;
@@ -81,12 +101,22 @@ namespace TheFusionEngineer.Player
             footstepSource.priority = 0;
             footstepSource.ignoreListenerPause = true;
 
+            // [런타임 자동 생성] 댄스곡 페이드와 BGM 전환에만 사용하는 AudioSource입니다.
+            danceMusicSource = gameObject.AddComponent<AudioSource>();
+            danceMusicSource.playOnAwake = false;
+            danceMusicSource.loop = false;
+            danceMusicSource.spatialBlend = 0f;
+            danceMusicSource.priority = 0;
+            danceMusicSource.ignoreListenerPause = true;
+            stageMusicVolume = stageMusicSource != null ? stageMusicSource.volume : 0f;
+
             if (footstepClip == null)
             {
                 Debug.LogError("[Player Audio] Footstep clip could not be loaded.", this);
             }
         }
 
+        // Unity가 컴포넌트를 활성화할 때 입력과 이벤트 연결을 시작합니다.
         private void OnEnable()
         {
             moveAction?.Enable();
@@ -97,6 +127,7 @@ namespace TheFusionEngineer.Player
             HoldInteractionController.HoldStopped += HandleInteractionHoldStopped;
         }
 
+        // Unity가 컴포넌트를 비활성화할 때 입력과 이벤트 연결을 정리합니다.
         private void OnDisable()
         {
             moveAction?.Disable();
@@ -108,8 +139,10 @@ namespace TheFusionEngineer.Player
 
             isDrilling = false;
             animator?.SetBool(IsDrillingParameter, false);
+            RestoreStageMusicImmediately();
         }
 
+        // Unity가 매 프레임 호출하며 입력과 현재 상태에 따른 동작을 갱신합니다.
         private void Update()
         {
             if (danceAction?.WasPressedThisFrame() == true)
@@ -119,6 +152,7 @@ namespace TheFusionEngineer.Player
 
             Vector2 input = moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
             bool danceInterrupted = TryInterruptDanceForMovement(input);
+            UpdateDanceMusic(danceInterrupted);
             bool actionAnimationLocked =
                 !danceInterrupted && IsActionAnimationLocked();
             if (actionAnimationLocked)
@@ -175,6 +209,7 @@ namespace TheFusionEngineer.Player
             }
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private void TryPlayRandomDance()
         {
             if (animator == null || !characterController.isGrounded || IsActionAnimationLocked())
@@ -200,8 +235,197 @@ namespace TheFusionEngineer.Player
             previousDanceIndex = danceIndex;
             actionLockUntil = Time.time + 0.25f;
             animator.CrossFadeInFixedTime(stateHash, 0.12f, 0, 0f);
+            PlayDanceMusic(danceIndex);
         }
 
+        // PlayDanceMusic 관련 게임 로직을 수행합니다.
+        private void PlayDanceMusic(int danceIndex)
+        {
+            if (danceMusicSource == null ||
+                danceMusicClips == null ||
+                danceIndex < 0 ||
+                danceIndex >= danceMusicClips.Length ||
+                danceMusicClips[danceIndex] == null)
+            {
+                Debug.LogWarning(
+                    $"[Player Audio] No music is assigned for dance '{DanceStateNames[danceIndex]}'.",
+                    this);
+                return;
+            }
+
+            StopMusicFadeRoutine();
+            danceMusicSource.Stop();
+            activeDanceIndex = danceIndex;
+            dancePlaybackStartTime = Time.time;
+            danceMusicSource.clip = danceMusicClips[danceIndex];
+            danceMusicSource.volume = 0f;
+            danceMusicSource.Play();
+            resumeStageMusicAfterDance = stageMusicSource != null && stageMusicSource.isPlaying;
+            musicFadeRoutine = StartCoroutine(FadeToDanceMusic());
+        }
+
+        // UpdateDanceMusic 관련 게임 로직을 수행합니다.
+        private void UpdateDanceMusic(bool danceInterrupted)
+        {
+            if (activeDanceIndex < 0)
+            {
+                return;
+            }
+
+            if (danceInterrupted)
+            {
+                StopDanceMusic();
+                return;
+            }
+
+            // CrossFade 직후에는 아직 현재 Animator 상태가 Idle일 수 있으므로 잠깐 기다립니다.
+            if (Time.time - dancePlaybackStartTime < 0.2f || animator == null)
+            {
+                return;
+            }
+
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            bool isPlayingDance = IsDanceState(currentState.fullPathHash);
+            if (animator.IsInTransition(0))
+            {
+                isPlayingDance |= IsDanceState(
+                    animator.GetNextAnimatorStateInfo(0).fullPathHash);
+            }
+
+            if (!isPlayingDance)
+            {
+                StopDanceMusic();
+            }
+        }
+
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
+        private void StopDanceMusic()
+        {
+            if (activeDanceIndex < 0 &&
+                (danceMusicSource == null || !danceMusicSource.isPlaying))
+            {
+                return;
+            }
+
+            activeDanceIndex = -1;
+            StopMusicFadeRoutine();
+            musicFadeRoutine = StartCoroutine(FadeBackToStageMusic());
+        }
+
+        // FadeToDanceMusic 관련 게임 로직을 수행합니다.
+        private IEnumerator FadeToDanceMusic()
+        {
+            float elapsed = 0f;
+            float danceStartVolume = danceMusicSource.volume;
+            float stageStartVolume = stageMusicSource != null ? stageMusicSource.volume : 0f;
+
+            while (elapsed < musicFadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float progress = Mathf.Clamp01(elapsed / musicFadeDuration);
+                danceMusicSource.volume = Mathf.Lerp(danceStartVolume, danceMusicVolume, progress);
+                if (stageMusicSource != null && resumeStageMusicAfterDance)
+                {
+                    stageMusicSource.volume = Mathf.Lerp(stageStartVolume, 0f, progress);
+                }
+
+                yield return null;
+            }
+
+            danceMusicSource.volume = danceMusicVolume;
+            if (stageMusicSource != null && resumeStageMusicAfterDance)
+            {
+                stageMusicSource.volume = 0f;
+                stageMusicSource.Pause();
+            }
+
+            musicFadeRoutine = null;
+        }
+
+        // FadeBackToStageMusic 관련 게임 로직을 수행합니다.
+        private IEnumerator FadeBackToStageMusic()
+        {
+            float elapsed = 0f;
+            float danceStartVolume = danceMusicSource != null ? danceMusicSource.volume : 0f;
+            float stageStartVolume = stageMusicSource != null ? stageMusicSource.volume : 0f;
+
+            if (stageMusicSource != null && resumeStageMusicAfterDance)
+            {
+                if (!stageMusicSource.isPlaying)
+                {
+                    stageMusicSource.UnPause();
+                }
+            }
+
+            while (elapsed < musicFadeDuration)
+            {
+                elapsed += Time.unscaledDeltaTime;
+                float progress = Mathf.Clamp01(elapsed / musicFadeDuration);
+                if (danceMusicSource != null)
+                {
+                    danceMusicSource.volume = Mathf.Lerp(danceStartVolume, 0f, progress);
+                }
+
+                if (stageMusicSource != null && resumeStageMusicAfterDance)
+                {
+                    stageMusicSource.volume =
+                        Mathf.Lerp(stageStartVolume, stageMusicVolume, progress);
+                }
+
+                yield return null;
+            }
+
+            if (danceMusicSource != null)
+            {
+                danceMusicSource.Stop();
+                danceMusicSource.clip = null;
+                danceMusicSource.volume = 0f;
+            }
+
+            if (stageMusicSource != null && resumeStageMusicAfterDance)
+            {
+                stageMusicSource.volume = stageMusicVolume;
+            }
+
+            resumeStageMusicAfterDance = false;
+            musicFadeRoutine = null;
+        }
+
+        // 더 이상 필요하지 않은 화면 요소와 진행 중 작업을 정리합니다.
+        private void StopMusicFadeRoutine()
+        {
+            if (musicFadeRoutine == null)
+            {
+                return;
+            }
+
+            StopCoroutine(musicFadeRoutine);
+            musicFadeRoutine = null;
+        }
+
+        // RestoreStageMusicImmediately 관련 게임 로직을 수행합니다.
+        private void RestoreStageMusicImmediately()
+        {
+            StopMusicFadeRoutine();
+            activeDanceIndex = -1;
+
+            if (danceMusicSource != null)
+            {
+                danceMusicSource.Stop();
+                danceMusicSource.clip = null;
+                danceMusicSource.volume = 0f;
+            }
+
+            if (stageMusicSource != null && resumeStageMusicAfterDance)
+            {
+                stageMusicSource.volume = stageMusicVolume;
+                stageMusicSource.UnPause();
+            }
+
+            resumeStageMusicAfterDance = false;
+        }
+
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private bool TryInterruptDanceForMovement(Vector2 input)
         {
             if (animator == null ||
@@ -237,6 +461,7 @@ namespace TheFusionEngineer.Player
             return true;
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private static bool IsDanceState(int stateHash)
         {
             foreach (int danceStateHash in DanceStateHashes)
@@ -250,6 +475,7 @@ namespace TheFusionEngineer.Player
             return false;
         }
 
+        // [런타임 자동 생성] 필요한 게임 오브젝트와 컴포넌트 계층을 구성합니다.
         private static int[] CreateDanceStateHashes()
         {
             int[] hashes = new int[DanceStateNames.Length];
@@ -262,6 +488,7 @@ namespace TheFusionEngineer.Player
             return hashes;
         }
 
+        // 입력 또는 게임 이벤트가 발생했을 때 후속 동작을 처리합니다.
         private void HandleInteractionHoldStarted(Transform interactionPlayer)
         {
             if (interactionPlayer != transform || animator == null)
@@ -277,11 +504,13 @@ namespace TheFusionEngineer.Player
             }
 
             isDrilling = true;
+            StopDanceMusic();
             actionLockUntil = Time.time + 0.25f;
             animator.SetBool(IsDrillingParameter, true);
             animator.CrossFadeInFixedTime(drillEnterHash, 0.12f, 0, 0f);
         }
 
+        // 입력 또는 게임 이벤트가 발생했을 때 후속 동작을 처리합니다.
         private void HandleInteractionHoldStopped(Transform interactionPlayer)
         {
             if (interactionPlayer != transform)
@@ -293,6 +522,7 @@ namespace TheFusionEngineer.Player
             animator?.SetBool(IsDrillingParameter, false);
         }
 
+        // 필요한 실행 조건을 검사하고 조건을 만족할 때만 동작을 수행합니다.
         private bool IsActionAnimationLocked()
         {
             if (isDrilling || Time.time < actionLockUntil || animator == null)
@@ -309,6 +539,7 @@ namespace TheFusionEngineer.Player
             return animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).tagHash == ActionTag;
         }
 
+        // UpdateFootsteps 관련 게임 로직을 수행합니다.
         private void UpdateFootsteps(bool canPlayFootsteps, bool isSprinting)
         {
             Vector3 horizontalVelocity = characterController.velocity;
@@ -338,12 +569,14 @@ namespace TheFusionEngineer.Player
             nextFootstepTime = Time.time + interval;
         }
 
+        // 다른 컴포넌트가 전달한 참조와 설정값을 저장합니다.
         public void Configure(InputActionAsset actions, Transform cameraTransform)
         {
             inputActions = actions;
             movementCamera = cameraTransform;
         }
 
+        // GetCameraRelativeDirection 관련 게임 로직을 수행합니다.
         private Vector3 GetCameraRelativeDirection(Vector2 input)
         {
             Vector3 forward = movementCamera != null ? movementCamera.forward : Vector3.forward;

@@ -6717,7 +6717,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b11c65efc735006478b93c1ae338bdad, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.WorldCollisionBootstrap
 --- !u!4 &407573668
 Transform:
@@ -14115,6 +14115,15 @@ MonoBehaviour:
   jumpHeight: 1.5
   gravity: -20
   animator: {fileID: 1806990446}
+  danceMusicClips:
+  - {fileID: 8300000, guid: 20e4277bbb6a7034581e06aaa5243e3d, type: 3}
+  - {fileID: 8300000, guid: 1edc59b2e7a6a284b80ce0041c201621, type: 3}
+  - {fileID: 8300000, guid: 9b36a2c305735484e85b0c085f43ea7e, type: 3}
+  - {fileID: 8300000, guid: 7ea83d22cd49c924e977c778ca4307b9, type: 3}
+  - {fileID: 8300000, guid: 4d5827144c519414d9a10eabb4130a33, type: 3}
+  danceMusicVolume: 0.8
+  stageMusicSource: {fileID: 1549584160}
+  musicFadeDuration: 0.6
   footstepClip: {fileID: 0}
   footstepInterval: 0.42
   footstepVolume: 0.85
@@ -15337,7 +15346,7 @@ PhysicsMaterial:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name:
+  m_Name: 
   serializedVersion: 2
   m_DynamicFriction: 0.6
   m_StaticFriction: 0.6
@@ -18454,6 +18463,7 @@ GameObject:
   - component: {fileID: 1038592956}
   - component: {fileID: 1038592958}
   - component: {fileID: 1038592957}
+  - component: {fileID: 1038592959}
   m_Layer: 0
   m_Name: HubToServerRack_4
   m_TagString: Untagged
@@ -18533,6 +18543,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1038592955}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1038592959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1038592955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1057151909
 GameObject:
   m_ObjectHideFlags: 0
@@ -19040,6 +19062,7 @@ GameObject:
   - component: {fileID: 1079551435}
   - component: {fileID: 1079551437}
   - component: {fileID: 1079551436}
+  - component: {fileID: 1079551438}
   m_Layer: 0
   m_Name: HubToServerRack_3
   m_TagString: Untagged
@@ -19119,6 +19142,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1079551434}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1079551438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1079551434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1082225677
 GameObject:
   m_ObjectHideFlags: 0
@@ -29378,6 +29413,7 @@ GameObject:
   - component: {fileID: 1723593112}
   - component: {fileID: 1723593114}
   - component: {fileID: 1723593113}
+  - component: {fileID: 1723593115}
   m_Layer: 0
   m_Name: HubToServerRack_2
   m_TagString: Untagged
@@ -29457,6 +29493,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1723593111}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1723593115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723593111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1725665923
 GameObject:
   m_ObjectHideFlags: 0
@@ -32402,6 +32450,7 @@ GameObject:
   - component: {fileID: 1933990825}
   - component: {fileID: 1933990827}
   - component: {fileID: 1933990826}
+  - component: {fileID: 1933990828}
   m_Layer: 0
   m_Name: TerminalToHub
   m_TagString: Untagged
@@ -32481,6 +32530,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1933990824}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1933990828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933990824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1935380035
 GameObject:
   m_ObjectHideFlags: 0
@@ -32885,6 +32946,7 @@ GameObject:
   - component: {fileID: 1945934880}
   - component: {fileID: 1945934882}
   - component: {fileID: 1945934881}
+  - component: {fileID: 1945934883}
   m_Layer: 0
   m_Name: HubToServerRack_1
   m_TagString: Untagged
@@ -32964,6 +33026,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1945934879}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1945934883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1945934879}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &1946269075
 GameObject:
   m_ObjectHideFlags: 0
@@ -33741,6 +33815,7 @@ GameObject:
   - component: {fileID: 1983239936}
   - component: {fileID: 1983239938}
   - component: {fileID: 1983239937}
+  - component: {fileID: 1983239939}
   m_Layer: 0
   m_Name: SSM_DataHub
   m_TagString: Untagged
@@ -33820,6 +33895,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1983239935}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1983239939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1983239935}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b21fd6120bb849c48a82a6fd68f0420a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.NonSolidVisual
 --- !u!1 &2014990713
 GameObject:
   m_ObjectHideFlags: 0
