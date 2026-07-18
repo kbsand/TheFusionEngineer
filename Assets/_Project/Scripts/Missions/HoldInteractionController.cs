@@ -22,7 +22,7 @@ namespace TheFusionEngineer.Missions
         [SerializeField] private Text promptLabel;
         [SerializeField] private Text percentLabel;
         [SerializeField] private string prompt = "E 키를 길게 누르세요";
-        [SerializeField] private string lockedPrompt = "상호작용이 잠겨 있습니다";
+        [SerializeField] private string lockedPrompt = "아직 사용할 수 없습니다";
         [SerializeField, Min(0.1f)] private float holdDuration = 2f;
         [SerializeField, Min(0.1f)] private float interactionDistance = 2.7f;
         [SerializeField] private bool startsAvailable = true;
@@ -161,7 +161,7 @@ namespace TheFusionEngineer.Missions
             string promptText,
             float duration,
             bool availableAtStart,
-            string lockedPromptText = "상호작용이 잠겨 있습니다",
+            string lockedPromptText = "아직 사용할 수 없습니다",
             bool canRepeat = false,
             float distance = 2.7f,
             bool requireTrigger = true,

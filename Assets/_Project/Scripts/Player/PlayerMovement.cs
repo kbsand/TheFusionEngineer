@@ -48,6 +48,7 @@ namespace TheFusionEngineer.Player
         private static readonly int VerticalSpeedParameter = Animator.StringToHash("VerticalSpeed");
         private static readonly int IsDrillingParameter = Animator.StringToHash("IsDrilling");
         private static readonly int ActionTag = Animator.StringToHash("Action");
+        private static readonly int IdleState = Animator.StringToHash("Base Layer.Idle");
 
         private static readonly string[] DanceStateNames =
         {
@@ -57,6 +58,7 @@ namespace TheFusionEngineer.Player
             "Dance Free Style",
             "Dance Legs Kick"
         };
+        private static readonly int[] DanceStateHashes = CreateDanceStateHashes();
 
         public event Action MovementInputDetected;
 
@@ -116,7 +118,9 @@ namespace TheFusionEngineer.Player
             }
 
             Vector2 input = moveAction?.ReadValue<Vector2>() ?? Vector2.zero;
-            bool actionAnimationLocked = IsActionAnimationLocked();
+            bool danceInterrupted = TryInterruptDanceForMovement(input);
+            bool actionAnimationLocked =
+                !danceInterrupted && IsActionAnimationLocked();
             if (actionAnimationLocked)
             {
                 input = Vector2.zero;
@@ -196,6 +200,66 @@ namespace TheFusionEngineer.Player
             previousDanceIndex = danceIndex;
             actionLockUntil = Time.time + 0.25f;
             animator.CrossFadeInFixedTime(stateHash, 0.12f, 0, 0f);
+        }
+
+        private bool TryInterruptDanceForMovement(Vector2 input)
+        {
+            if (animator == null ||
+                isDrilling ||
+                input.sqrMagnitude <= 0.001f)
+            {
+                return false;
+            }
+
+            AnimatorStateInfo currentState = animator.GetCurrentAnimatorStateInfo(0);
+            bool currentStateIsDance = IsDanceState(currentState.fullPathHash);
+            bool nextStateIsDance = false;
+            bool nextStateIsIdle = false;
+
+            if (animator.IsInTransition(0))
+            {
+                AnimatorStateInfo nextState = animator.GetNextAnimatorStateInfo(0);
+                nextStateIsDance = IsDanceState(nextState.fullPathHash);
+                nextStateIsIdle = nextState.fullPathHash == IdleState;
+            }
+
+            if (!currentStateIsDance && !nextStateIsDance)
+            {
+                return false;
+            }
+
+            actionLockUntil = Time.time;
+            if (!nextStateIsIdle)
+            {
+                animator.CrossFadeInFixedTime(IdleState, 0.08f, 0, 0f);
+            }
+
+            return true;
+        }
+
+        private static bool IsDanceState(int stateHash)
+        {
+            foreach (int danceStateHash in DanceStateHashes)
+            {
+                if (stateHash == danceStateHash)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static int[] CreateDanceStateHashes()
+        {
+            int[] hashes = new int[DanceStateNames.Length];
+            for (int index = 0; index < DanceStateNames.Length; index++)
+            {
+                hashes[index] = Animator.StringToHash(
+                    $"Base Layer.{DanceStateNames[index]}");
+            }
+
+            return hashes;
         }
 
         private void HandleInteractionHoldStarted(Transform interactionPlayer)

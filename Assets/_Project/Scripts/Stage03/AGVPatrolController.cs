@@ -14,6 +14,8 @@ namespace TheFusionEngineer.Stage03
         private int waypointIndex;
         private bool waiting;
 
+        public Transform[] Waypoints => waypoints;
+
         private void Update()
         {
             if (waiting || waypoints == null || waypoints.Length == 0) return;

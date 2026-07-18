@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace TheFusionEngineer.UI
 {
     /// <summary>
-    /// 인트로가 끝난 뒤 상호작용과 랜덤 댄스 조작법을 한 번만 안내합니다.
+    /// Stage1 인트로가 끝난 뒤 진행 방법과 랜덤 댄스 조작법을 한 번만 안내합니다.
     /// </summary>
     [DefaultExecutionOrder(-950)]
     public sealed class GameplayControlHint : MonoBehaviour
@@ -70,8 +70,10 @@ namespace TheFusionEngineer.UI
 
         private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (hasShown ||
-                scene.name.StartsWith("Ending", StringComparison.OrdinalIgnoreCase))
+            bool isStageOne = scene.name.Equals(
+                "Stage01_Origin",
+                StringComparison.OrdinalIgnoreCase);
+            if (hasShown || !isStageOne)
             {
                 StopShowRoutine();
                 canvasRoot?.SetActive(false);
@@ -164,7 +166,8 @@ namespace TheFusionEngineer.UI
             panelRect.anchorMax = new Vector2(0.5f, 1f);
             panelRect.pivot = new Vector2(0.5f, 1f);
             panelRect.anchoredPosition = new Vector2(0f, -292f);
-            panelRect.sizeDelta = new Vector2(760f, 86f);
+            bool isMobile = MobileWebGLControls.TouchInterfaceActive;
+            panelRect.sizeDelta = new Vector2(900f, isMobile ? 124f : 90f);
 
             Image panel = panelObject.GetComponent<Image>();
             panel.color = new Color(0.015f, 0.025f, 0.045f, 0.92f);
@@ -193,9 +196,17 @@ namespace TheFusionEngineer.UI
             textRect.offsetMax = new Vector2(-20f, -8f);
 
             TextMeshProUGUI text = textObject.GetComponent<TextMeshProUGUI>();
+            string progressInstruction = isMobile
+                ? "사용 버튼을 길게 누르세요."
+                : "E 키를 길게 누르세요.";
+            string danceInstruction = isMobile ? "댄스 버튼으로" : "B 키로";
+            string landscapeHint = isMobile
+                ? "<color=#80FF72>모바일 안내</color>  원활한 플레이를 위해 화면을 가로로 돌려주세요.\n"
+                : string.Empty;
             text.text =
-                "<color=#52E8FF>조작 팁</color>  E 키 또는 사용 버튼을 길게 눌러 상호작용하세요\n" +
-                "<color=#FFB35A>재미 팁</color>  B 키, 방향 패드 ↓ 또는 댄스 버튼으로 랜덤 댄스를 즐겨보세요!";
+                landscapeHint +
+                $"<color=#52E8FF>진행 팁</color>  미션을 수행하거나 다음 포탈로 이동할 때 {progressInstruction}\n" +
+                $"<color=#FFB35A>^^</color>  {danceInstruction} 랜덤 댄스를 즐겨보세요!";
             text.fontSize = 22f;
             text.fontStyle = FontStyles.Normal;
             text.alignment = TextAlignmentOptions.Center;

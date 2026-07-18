@@ -4781,8 +4781,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Stage02.RoleBadgeController
   badgeText: {fileID: 278110297}
-  missionARole: '직무: FULL-STACK DEVELOPER'
-  missionBRole: '직무: BACKEND DEVELOPER'
+  missionARole: "\uC9C1\uBB34: FULL-STACK DEVELOPER"
+  missionBRole: "\uC9C1\uBB34: BACKEND DEVELOPER"
 --- !u!114 &278110297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4816,7 +4816,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: '직무: FULL-STACK DEVELOPER'
+  m_Text: "\uC9C1\uBB34: FULL-STACK DEVELOPER"
 --- !u!114 &278110298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6690,6 +6690,50 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &407573666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 407573668}
+  - component: {fileID: 407573667}
+  m_Layer: 0
+  m_Name: World Collision
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &407573667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407573666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b11c65efc735006478b93c1ae338bdad, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TheFusionEngineer.Core.WorldCollisionBootstrap
+--- !u!4 &407573668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 407573666}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &417434561
 GameObject:
   m_ObjectHideFlags: 0
@@ -9122,8 +9166,9 @@ MonoBehaviour:
   progressFill: {fileID: 376407945}
   promptLabel: {fileID: 61997167}
   percentLabel: {fileID: 1728473372}
-  prompt: E 키를 길게 눌러 메모리 풀을 복구하세요
-  lockedPrompt: 먼저 미션 A를 완료하세요
+  prompt: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uBA54\uBAA8\uB9AC \uD480\uC744
+    \uBCF5\uAD6C\uD558\uC138\uC694"
+  lockedPrompt: "\uBA3C\uC800 \uBBF8\uC158 A\uB97C \uC644\uB8CC\uD558\uC138\uC694"
   holdDuration: 2
   interactionDistance: 2.2
   startsAvailable: 0
@@ -11052,8 +11097,8 @@ MonoBehaviour:
   progressFill: {fileID: 376407945}
   promptLabel: {fileID: 61997167}
   percentLabel: {fileID: 1728473372}
-  prompt: E 키를 길게 눌러 사다리를 오르세요
-  lockedPrompt: 먼저 미션 A와 B를 완료하세요
+  prompt: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uC0AC\uB2E4\uB9AC\uB97C \uC624\uB974\uC138\uC694"
+  lockedPrompt: "\uBA3C\uC800 \uBBF8\uC158 A\uC640 B\uB97C \uC644\uB8CC\uD558\uC138\uC694"
   holdDuration: 2
   interactionDistance: 3.2
   startsAvailable: 0
@@ -14065,7 +14110,9 @@ MonoBehaviour:
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   movementCamera: {fileID: 1549584159}
   moveSpeed: 5
+  sprintSpeed: 8
   rotationSpeed: 720
+  jumpHeight: 1.5
   gravity: -20
   animator: {fileID: 1806990446}
   footstepClip: {fileID: 0}
@@ -14311,7 +14358,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: E 키를 길게 눌러 메모리 풀을 복구하세요
+  m_Text: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uBA54\uBAA8\uB9AC \uD480\uC744
+    \uBCF5\uAD6C\uD558\uC138\uC694"
 --- !u!114 &846994568
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15283,6 +15331,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 878356460}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!134 &880806888
+PhysicsMaterial:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name:
+  serializedVersion: 2
+  m_DynamicFriction: 0.6
+  m_StaticFriction: 0.6
+  m_Bounciness: 0
+  m_FrictionCombine: 0
+  m_BounceCombine: 0
 --- !u!1 &882023054
 GameObject:
   m_ObjectHideFlags: 0
@@ -15321,7 +15382,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 삼성중공업
+  m_text: "\uC0BC\uC131\uC911\uACF5\uC5C5"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cd2fac18fcb492e43833b713fa0ef35f, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: dd6d8d8c341d58a47927f3702c957ca2, type: 2}
@@ -15806,9 +15867,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: '다음 목표
-
-    포탈로 이동하세요'
+  m_Text: "\uB2E4\uC74C \uBAA9\uD45C\n\uD3EC\uD0C8\uB85C \uC774\uB3D9\uD558\uC138\uC694"
 --- !u!222 &894649214
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -16840,7 +16899,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: E 키를 길게 눌러 스테이지 3로 이동하세요
+  m_Text: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uC2A4\uD14C\uC774\uC9C0 3\uB85C
+    \uC774\uB3D9\uD558\uC138\uC694"
 --- !u!222 &950873587
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -17525,9 +17585,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 0.82
-  m_Text: '다음 커리어
-
-    THE AI FRONTIER'
+  m_Text: "\uB2E4\uC74C \uCEE4\uB9AC\uC5B4\nTHE AI FRONTIER"
 --- !u!222 &981503431
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19286,22 +19344,19 @@ MonoBehaviour:
   firstMissionCompleteClip: {fileID: 0}
   stageCompleteClip: {fileID: 0}
   completionVolume: 0.85
-  missionAText: '미션 A
-
-    SSM MONITORING 동기화'
-  missionBText: '미션 B
-
-    LINUX ANALYSIS SERVER 복구'
-  missionACompleteText: 'SSM MONITORING 동기화 완료
-
-    연간 비용 절감: 1억 7천만 원'
-  missionBCompleteText: '메모리 풀 복구 완료
-
-    연간 비용 절감: 1억 5,500만 원'
-  acquiredText: 'CAREER CORE 02: 획득'
-  finalMessageText: 'FULL-STACK + BACKEND
-
-    아키텍처 구축 완료'
+  missionAText: "\uBBF8\uC158 A\nSSM MONITORING \uB3D9\uAE30\uD654"
+  missionBText: "\uBBF8\uC158 B\nLINUX ANALYSIS SERVER \uBCF5\uAD6C"
+  missionACompleteText: "SSM MONITORING \uB3D9\uAE30\uD654 \uC644\uB8CC\n\uC5F0\uAC04
+    \uBE44\uC6A9 \uC808\uAC10: 1\uC5B5 7\uCC9C\uB9CC \uC6D0"
+  missionBCompleteText: "\uBA54\uBAA8\uB9AC \uD480 \uBCF5\uAD6C \uC644\uB8CC\n\uC5F0\uAC04
+    \uBE44\uC6A9 \uC808\uAC10: 1\uC5B5 5,500\uB9CC \uC6D0"
+  acquiredText: "CAREER CORE 02: \uD68D\uB4DD"
+  finalMessageText: "FULL-STACK + BACKEND\n\uC544\uD0A4\uD14D\uCC98 \uAD6C\uCD95
+    \uC644\uB8CC"
+  missionAObjectiveHint: "SSM MONITORING\uC73C\uB85C \uC774\uB3D9\uD574 E \uD0A4\uB97C
+    \uAE38\uAC8C \uB20C\uB7EC \uB3D9\uAE30\uD654\uD558\uC138\uC694."
+  missionBObjectiveHint: "LINUX ANALYSIS SERVER\uB85C \uC774\uB3D9\uD574 E \uD0A4\uB97C
+    \uAE38\uAC8C \uB20C\uB7EC \uBCF5\uAD6C\uD558\uC138\uC694."
 --- !u!114 &1089853963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19411,8 +19466,8 @@ MonoBehaviour:
   roleText: {fileID: 2140056628}
   storyText: {fileID: 1393679430}
   period: 2015-2017
-  company: 삼성중공업
-  role: ICT 융합기술센터
+  company: "\uC0BC\uC131\uC911\uACF5\uC5C5"
+  role: "ICT \uC735\uD569\uAE30\uC220\uC13C\uD130"
   story: "29\uC0B4,\n\uC81C\uC5B4\uC5D0\uC11C\n\uC18C\uD504\uD2B8\uC6E8\uC5B4\uB85C\n\uC2DC\uC57C\uB97C
     \uB113\uD788\uB2E4."
   playerMovement: {fileID: 846714718}
@@ -21334,8 +21389,8 @@ MonoBehaviour:
   progressFill: {fileID: 376407945}
   promptLabel: {fileID: 61997167}
   percentLabel: {fileID: 1728473372}
-  prompt: E 키를 길게 눌러 동기화하세요
-  lockedPrompt: 이미 완료한 미션입니다
+  prompt: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uB3D9\uAE30\uD654\uD558\uC138\uC694"
+  lockedPrompt: "\uC774\uBBF8 \uC644\uB8CC\uD55C \uBBF8\uC158\uC785\uB2C8\uB2E4"
   holdDuration: 2
   interactionDistance: 2.8
   startsAvailable: 1
@@ -24644,6 +24699,63 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442075583}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &1443323495
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 5.66
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6908834
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7229662
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -92.6
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
+      propertyPath: m_Name
+      value: indicator-special-arrow
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 758f312c91496734ea8d4948db934a6d, type: 3}
 --- !u!1 &1456174571
 GameObject:
   m_ObjectHideFlags: 0
@@ -26415,9 +26527,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'CAREER CORE 02: 잠김
-
-'
+  m_Text: "CAREER CORE 02: \uC7A0\uAE40\n"
 --- !u!114 &1574933435
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27722,8 +27832,9 @@ MonoBehaviour:
   - {fileID: 862416309}
   - {fileID: 434411746}
   activateOnComplete: []
-  promptMessage: E 키를 길게 눌러 메모리 풀을 복구하세요
-  lockedPromptMessage: 먼저 미션 A를 완료하세요
+  promptMessage: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uBA54\uBAA8\uB9AC \uD480\uC744
+    \uBCF5\uAD6C\uD558\uC138\uC694"
+  lockedPromptMessage: "\uBA3C\uC800 \uBBF8\uC158 A\uB97C \uC644\uB8CC\uD558\uC138\uC694"
   holdInteraction: {fileID: 592301478}
   interactionDistance: 2.7
 --- !u!4 &1644293574
@@ -29389,8 +29500,8 @@ MonoBehaviour:
   - {fileID: 1723593111}
   - {fileID: 1079551434}
   - {fileID: 1038592955}
-  promptMessage: E 키를 길게 눌러 동기화하세요
-  lockedPromptMessage: 이미 완료한 미션입니다
+  promptMessage: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uB3D9\uAE30\uD654\uD558\uC138\uC694"
+  lockedPromptMessage: "\uC774\uBBF8 \uC644\uB8CC\uD55C \uBBF8\uC158\uC785\uB2C8\uB2E4"
   holdInteraction: {fileID: 1240737269}
   interactionDistance: 2.7
 --- !u!4 &1725665925
@@ -33454,9 +33565,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: '미션 A
-
-    SSM MONITORING 동기화'
+  m_Text: "\uBBF8\uC158 A\nSSM MONITORING \uB3D9\uAE30\uD654"
 --- !u!114 &1971349312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33724,6 +33833,7 @@ GameObject:
   - component: {fileID: 2014990715}
   - component: {fileID: 2014990714}
   - component: {fileID: 2014990718}
+  - component: {fileID: 2014990719}
   m_Layer: 0
   m_Name: Stage03_PortalRoot
   m_TagString: Untagged
@@ -33781,6 +33891,8 @@ MonoBehaviour:
   guidanceArrow: {fileID: 1225589632}
   bobHeight: 0.25
   bobSpeed: 2
+  guidanceColor: {r: 0.28, g: 1, b: 0.08, a: 1}
+  emissionIntensity: 3.5
 --- !u!65 &2014990716
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -33788,7 +33900,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2014990713}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 880806888}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -33845,15 +33957,37 @@ MonoBehaviour:
   progressFill: {fileID: 376407945}
   promptLabel: {fileID: 61997167}
   percentLabel: {fileID: 1728473372}
-  prompt: E 키를 길게 눌러 스테이지 3로 이동하세요
-  lockedPrompt: 먼저 CAREER CORE를 획득하세요
+  prompt: "E \uD0A4\uB97C \uAE38\uAC8C \uB20C\uB7EC \uC2A4\uD14C\uC774\uC9C0 3\uB85C
+    \uC774\uB3D9\uD558\uC138\uC694"
+  lockedPrompt: "\uBA3C\uC800 CAREER CORE\uB97C \uD68D\uB4DD\uD558\uC138\uC694"
   holdDuration: 2
   interactionDistance: 3.2
   startsAvailable: 0
   repeatable: 0
-  useTriggerRange: 1
+  useTriggerRange: 0
   holdClip: {fileID: 0}
   holdVolume: 0.85
+--- !u!65 &2014990719
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2014990713}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4, y: 3.8, z: 2}
+  m_Center: {x: 0, y: 1.6, z: -0.45}
 --- !u!1 &2019999686
 GameObject:
   m_ObjectHideFlags: 0
@@ -35516,7 +35650,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: ICT 융합기술센터
+  m_text: "ICT \uC735\uD569\uAE30\uC220\uC13C\uD130"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: cd2fac18fcb492e43833b713fa0ef35f, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: dd6d8d8c341d58a47927f3702c957ca2, type: 2}
@@ -35811,3 +35945,5 @@ SceneRoots:
   - {fileID: 1026812382}
   - {fileID: 1393453633}
   - {fileID: 1655153984}
+  - {fileID: 1443323495}
+  - {fileID: 407573668}

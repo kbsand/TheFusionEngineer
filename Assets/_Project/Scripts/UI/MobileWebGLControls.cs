@@ -301,8 +301,8 @@ namespace TheFusionEngineer.UI
         private static bool ShouldShowTouchControls()
         {
 #if UNITY_EDITOR
-            // Play Mode에서 마우스로 모바일 UI 배치와 입력을 바로 확인할 수 있게 합니다.
-            return true;
+            // 에디터와 데스크톱에서는 터치스크린 유무와 관계없이 모바일 UI를 숨깁니다.
+            return false;
 #elif UNITY_WEBGL
             try
             {
@@ -312,8 +312,10 @@ namespace TheFusionEngineer.UI
             {
                 return Touchscreen.current != null;
             }
+#elif UNITY_ANDROID || UNITY_IOS
+            return true;
 #else
-            return Touchscreen.current != null;
+            return false;
 #endif
         }
 

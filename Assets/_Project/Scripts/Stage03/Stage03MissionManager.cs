@@ -11,6 +11,7 @@ namespace TheFusionEngineer.Stage03
     {
         [SerializeField] private Stage03Terminal missionA;
         [SerializeField] private Stage03Terminal missionB;
+        [SerializeField] private AIMainDisplayController aiMainDisplay;
         [SerializeField] private SolarLogisticsController solarLogistics;
         [SerializeField] private Text missionText;
         [SerializeField] private Text roleBadgeText;
@@ -57,12 +58,19 @@ namespace TheFusionEngineer.Stage03
             {
                 stageCompleteClip = GameSfxLibrary.LoadStageComplete();
             }
+
+            if (aiMainDisplay == null)
+            {
+                aiMainDisplay = FindAnyObjectByType<AIMainDisplayController>();
+            }
+
             missionA?.SetAvailable(true);
             missionB?.SetAvailable(false);
             SetText(missionText, missionAText);
             SetText(roleBadgeText, missionARole);
             SetText(careerCoreText, "CAREER CORE 03: 잠김");
             objectiveBanner = MissionObjectiveBanner.AttachTo(this);
+            objectiveBanner.SetAutoCompact(true);
             objectiveBanner.Show(
                 "현재 미션  ·  1 / 2",
                 ExtractMissionTitle(missionAText),
@@ -100,6 +108,7 @@ namespace TheFusionEngineer.Stage03
         {
             if (terminal == missionA && missionA.IsCompleted)
             {
+                aiMainDisplay?.TurnOn();
                 ShowMessage(missionACompleteText, 3f);
                 PersistentSfxPlayer.Play(firstMissionCompleteClip, completionVolume);
                 missionB?.SetAvailable(true);
