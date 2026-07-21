@@ -11,6 +11,13 @@
 /Build/
 /Builds/
 
+# Local WebGL build output
+/WebGLBuild/
+
+# Unity Burst debug output
+*_BurstDebugInformation_DoNotShip/
+*BurstDebugInformation_DoNotShip/
+
 # IDE and editor settings
 /.vs/
 /.vscode/
@@ -22,3 +29,10 @@
 *.slnx
 *.user
 *.tmp
+
+# Cloudflare Worker local files
+/fusion-session-analytics/node_modules/
+/fusion-session-analytics/.wrangler/
+/fusion-session-analytics/.dev.vars
+/fusion-session-analytics/.env
+/.wrangler/
